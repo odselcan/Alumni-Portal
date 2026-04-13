@@ -1,0 +1,175 @@
+@model Alumni_Portal.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="container py-4">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- Sol: Kişisel Bilgiler (salt okunur) -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <div class="avatar-circle mx-auto mb-3">
+                        <span class="avatar-initials">
+                            @(Model.FirstName?.Substring(0,1))@(Model.LastName?.Substring(0,1))
+                        </span>
+                    </div>
+                    <h5 class="fw-bold mb-1">@Model.FirstName @Model.LastName</h5>
+                    <p class="text-muted small mb-3">@Model.Department</p>
+
+                    <hr />
+
+                    <div class="text-start">
+                        <div class="mb-3">
+                            <label class="info-label">Fakülte</label>
+                            <p class="info-value">@(Model.Faculty ?? "—")</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="info-label">Bölüm</label>
+                            <p class="info-value">@(Model.Department ?? "—")</p>
+                        </div>
+                        <div class="mb-0">
+                            <label class="info-label">Mezuniyet Tarihi</label>
+                            <p class="info-value">
+                                @(Model.GraduationDate.HasValue 
+                                    ? Model.GraduationDate.Value.ToString("MMMM yyyy") 
+                                    : "—")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ: Düzenlenebilir Bilgiler -->
+        <div class="col-md-8">
+            <form asp-action="Index" asp-controller="Profile" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- İletişim Bilgileri -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h6 class="fw-bold mb-0" style="color:#6c63ff;">
+                            İletişim Bilgileri
+                        </h6>
+                        <small class="text-muted">Bu bilgileri güncelleyebilirsiniz</small>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label">E-posta</label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label">Telefon</label>
+                                <input asp-for="Phone" class="form-control" placeholder="05XX XXX XX XX" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kariyer Bilgileri -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h6 class="fw-bold mb-0" style="color:#6c63ff;">
+                            Kariyer Bilgileri
+                        </h6>
+                        <small class="text-muted">Bu bilgileri güncelleyebilirsiniz</small>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="EmploymentStatus" class="form-label">Çalışma Durumu</label>
+                                <select asp-for="EmploymentStatus" class="form-select">
+                                    <option value="">Seçiniz</option>
+                                    <option value="employed">Çalışıyor</option>
+                                    <option value="job_seeking">İş Arıyor</option>
+                                    <option value="academic">Akademik</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="StartYear" class="form-label">İşe Başlama Yılı</label>
+                                <input asp-for="StartYear" class="form-control" placeholder="2023" />
+                                <span asp-validation-for="StartYear" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyName" class="form-label">Şirket Adı</label>
+                                <input asp-for="CompanyName" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Position" class="form-label">Pozisyon</label>
+                                <input asp-for="Position" class="form-control" />
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Sector" class="form-label">Sektör</label>
+                                <input asp-for="Sector" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn px-4 py-2 text-white fw-semibold"
+                            style="background-color:#6c63ff; border-radius:10px;">
+                        Kaydet
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #7c73f5, #6c63ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .avatar-initials {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .info-label {
+        font-size: 0.78rem;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+        display: block;
+    }
+    .info-value {
+        font-size: 0.95rem;
+        color: #333;
+        font-weight: 500;
+        margin: 0;
+    }
+    .form-control, .form-select {
+        border: 1.5px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.92rem;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #6c63ff;
+        box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+    }
+</style>

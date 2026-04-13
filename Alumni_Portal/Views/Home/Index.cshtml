@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- İstatistik Kartları -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:52px;height:52px;border-radius:14px;background:#ede9ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-people-fill" style="color:#6c63ff;font-size:1.5rem;"></i>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:700;color:#1a1a2e;line-height:1;">@ViewBag.TotalGraduates</div>
+                    <div style="font-size:0.82rem;color:#888;margin-top:4px;">Toplam Mezun</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:52px;height:52px;border-radius:14px;background:#e6f9f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-briefcase-fill" style="color:#22c55e;font-size:1.5rem;"></i>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:700;color:#1a1a2e;line-height:1;">@ViewBag.Employed</div>
+                    <div style="font-size:0.82rem;color:#888;margin-top:4px;">Çalışıyor</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:52px;height:52px;border-radius:14px;background:#fff7e6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-search" style="color:#f59e0b;font-size:1.5rem;"></i>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:700;color:#1a1a2e;line-height:1;">@ViewBag.JobSeeking</div>
+                    <div style="font-size:0.82rem;color:#888;margin-top:4px;">İş Arıyor</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:52px;height:52px;border-radius:14px;background:#e6f0ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-book-fill" style="color:#3b82f6;font-size:1.5rem;"></i>
+                </div>
+                <div>
+                    <div style="font-size:1.8rem;font-weight:700;color:#1a1a2e;line-height:1;">@ViewBag.Academic</div>
+                    <div style="font-size:0.82rem;color:#888;margin-top:4px;">Akademik</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alt Kısım -->
+<div class="row g-3">
+    <!-- Duyurular -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h6 style="font-weight:600;color:#1a1a2e;margin-bottom:20px;">
+                    <i class="bi bi-megaphone-fill me-2" style="color:#6c63ff;"></i>Duyurular & Etkinlikler
+                </h6>
+                <div class="text-center py-5" style="color:#ccc;">
+                    <i class="bi bi-inbox" style="font-size:3rem;"></i>
+                    <p class="mt-3 mb-0" style="font-size:0.9rem;color:#aaa;">Henüz duyuru bulunmuyor.</p>
+                    <p style="font-size:0.82rem;color:#bbb;">Duyurular buraya eklenecek.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doğum Günleri -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h6 style="font-weight:600;color:#1a1a2e;margin-bottom:20px;">
+                    <i class="bi bi-balloon-heart-fill me-2" style="color:#f43f5e;"></i>Bugünün Doğum Günleri
+                </h6>
+                @{
+                    var birthdays = ViewBag.Birthdays as List<Alumni_Portal.ViewModels.BirthdayViewModel>;
+                }
+                @if (birthdays != null && birthdays.Count > 0)
+                {
+                    foreach (var b in birthdays)
+                    {
+                        <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid #f5f5f5;">
+                            <div style="width:38px;height:38px;border-radius:50%;background:#ffe4e8;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:600;color:#f43f5e;flex-shrink:0;">
+                                @b.FullName.Substring(0, 1)
+                            </div>
+                            <div>
+                                <div style="font-size:0.9rem;font-weight:500;color:#1a1a2e;">@b.FullName</div>
+                                <div style="font-size:0.78rem;color:#888;">@b.BirthDate.ToString("d MMMM")</div>
+                            </div>
+                            <span class="ms-auto" style="font-size:1.2rem;">🎂</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5" style="color:#ccc;">
+                        <i class="bi bi-calendar-heart" style="font-size:3rem;"></i>
+                        <p class="mt-3 mb-0" style="font-size:0.9rem;color:#aaa;">Bugün doğum günü yok.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

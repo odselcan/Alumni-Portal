@@ -1,0 +1,110 @@
+@using Alumni_Portal.Models
+@model List<Graduate>
+
+@{
+    ViewData["Title"] = "Onay Bekleyenler";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <i class="bi bi-check-circle me-1"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="d-flex align-items-center justify-content-between p-4 pb-0">
+            <h6 style="font-weight:600;color:#1a1a2e;margin:0;">
+                <i class="bi bi-hourglass-split me-2" style="color:#6c63ff;"></i>
+                Onay Bekleyen Mezunlar
+                <span class="badge ms-2" style="background:#ede9ff;color:#6c63ff;font-size:0.78rem;">
+                    @Model.Count kişi
+                </span>
+            </h6>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background:#f8f8ff;">
+                    <tr>
+                        <th class="px-4 py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">MEZUN</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">FAKÜLTE / BÖLÜM</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">MEZUNİYET</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">KAYIT TARİHİ</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">İŞLEM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5" style="color:#aaa;">
+                                <i class="bi bi-check2-circle" style="font-size:2.5rem;color:#22c55e;"></i>
+                                <p class="mt-2 mb-0">Onay bekleyen kayıt yok.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var g in Model)
+                        {
+                            var initials = $"{g.FirstName?.Substring(0, 1)}{g.LastName?.Substring(0, 1)}".ToUpper();
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width:40px;height:40px;border-radius:50%;background:#fff7e6;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:600;color:#f59e0b;flex-shrink:0;">
+                                            @initials
+                                        </div>
+                                        <div>
+                                            <div style="font-weight:500;color:#1a1a2e;font-size:0.92rem;">@g.FirstName @g.LastName</div>
+                                            <div style="font-size:0.78rem;color:#888;">@g.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3">
+                                    <div style="font-size:0.88rem;color:#1a1a2e;">@(g.Faculty ?? "-")</div>
+                                    <div style="font-size:0.78rem;color:#888;">@(g.Department ?? "-")</div>
+                                </td>
+                                <td class="py-3">
+                                    <span style="font-size:0.88rem;color:#555;">
+                                        @(g.GraduationDate.HasValue ? g.GraduationDate.Value.ToString("MM/yyyy") : "-")
+                                    </span>
+                                </td>
+                                <td class="py-3">
+                                    <span style="font-size:0.82rem;color:#888;">
+                                        @(g.CreatedDate.HasValue ? g.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")
+                                    </span>
+                                </td>
+                                <td class="py-3">
+                                    <div class="d-flex gap-2">
+                                        <form method="post"
+                                              asp-action="Approve"
+                                              asp-controller="Admin"
+                                              asp-route-id="@g.GraduateId">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Onayla">
+                                                <i class="bi bi-check-lg me-1"></i> Onayla
+                                            </button>
+                                        </form>
+                                        <form method="post"
+                                              asp-action="Reject"
+                                              asp-controller="Admin"
+                                              asp-route-id="@g.GraduateId"
+                                              onsubmit="return confirm('@g.FirstName @g.LastName adlı kaydı reddetmek istediğinize emin misiniz?')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Reddet">
+                                                <i class="bi bi-x-lg me-1"></i> Reddet
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
