@@ -25,32 +25,11 @@
             font-size: 1.5rem;
             flex-shrink: 0;
         }
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1a1a2e;
-            line-height: 1;
-        }
-        .stat-label {
-            font-size: 0.82rem;
-            color: #888;
-            margin-top: 4px;
-        }
-        .stat-percent {
-            font-size: 0.82rem;
-            color: #aaa;
-            margin-top: 2px;
-        }
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-        }
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 20px;
-        }
+        .stat-number { font-size: 2rem; font-weight: 700; color: #1a1a2e; line-height: 1; }
+        .stat-label { font-size: 0.82rem; color: #888; margin-top: 4px; }
+        .stat-percent { font-size: 0.82rem; color: #aaa; margin-top: 2px; }
+        .progress { height: 8px; border-radius: 4px; }
+        .section-title { font-size: 1rem; font-weight: 600; color: #1a1a2e; margin-bottom: 20px; }
         .list-stat-item {
             display: flex;
             align-items: center;
@@ -59,17 +38,9 @@
             border-bottom: 1px solid #f5f5f5;
         }
         .list-stat-item:last-child { border-bottom: none; }
-        .list-stat-bar {
-            height: 6px;
-            border-radius: 3px;
-            background: #ede9ff;
-            margin-top: 6px;
-        }
-        .list-stat-bar-fill {
-            height: 6px;
-            border-radius: 3px;
-            background: #6c63ff;
-        }
+        .list-stat-bar { height: 6px; border-radius: 3px; background: #ede9ff; margin-top: 6px; }
+        .list-stat-bar-fill { height: 6px; border-radius: 3px; background: #6c63ff; }
+        .chart-container { position: relative; height: 260px; }
     </style>
 }
 
@@ -132,21 +103,48 @@
     </div>
 </div>
 
-<!-- Çalışma Durumu Dağılımı + Fakülte -->
+<!-- Grafikler -->
 <div class="row g-3 mb-4">
-    <!-- Çalışma Durumu -->
+    <!-- Pasta Grafik -->
     <div class="col-md-5">
         <div class="card border-0 shadow-sm p-4 h-100">
             <div class="section-title">
                 <i class="bi bi-pie-chart-fill me-2" style="color:#6c63ff;"></i>Çalışma Durumu Dağılımı
             </div>
+            <div class="chart-container">
+                <canvas id="statusPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Çubuk Grafik - Fakülte -->
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-bar-chart-fill me-2" style="color:#6c63ff;"></i>Fakülteye Göre Dağılım
+            </div>
+            <div class="chart-container">
+                <canvas id="facultyBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress bar listeler -->
+<div class="row g-3 mb-4">
+    <!-- Çalışma Durumu Progress -->
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-list-check me-2" style="color:#6c63ff;"></i>Durum Detayları
+            </div>
             @{
                 var statuses = new[]
                 {
-                    new { Label = "Çalışıyor", Count = employed, Color = "#22c55e", Bg = "#e6f9f0" },
-                    new { Label = "İş Arıyor", Count = jobSeeking, Color = "#f59e0b", Bg = "#fff7e6" },
-                    new { Label = "Akademik", Count = academic, Color = "#3b82f6", Bg = "#e6f0ff" },
-                    new { Label = "Belirtilmemiş", Count = unspecified, Color = "#d1d5db", Bg = "#f5f5f5" }
+                    new { Label = "Çalışıyor", Count = employed, Color = "#22c55e" },
+                    new { Label = "İş Arıyor", Count = jobSeeking, Color = "#f59e0b" },
+                    new { Label = "Akademik", Count = academic, Color = "#3b82f6" },
+                    new { Label = "Belirtilmemiş", Count = unspecified, Color = "#d1d5db" }
                 };
             }
             @foreach (var s in statuses)
@@ -155,7 +153,9 @@
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1">
                         <span style="font-size:0.88rem;color:#444;">@s.Label</span>
-                        <span style="font-size:0.88rem;font-weight:600;color:#1a1a2e;">@s.Count <span style="color:#aaa;font-weight:400;">(%@percent)</span></span>
+                        <span style="font-size:0.88rem;font-weight:600;color:#1a1a2e;">
+                            @s.Count <span style="color:#aaa;font-weight:400;">(%@percent)</span>
+                        </span>
                     </div>
                     <div class="progress">
                         <div class="progress-bar" style="width:@percent%;background:@s.Color;" role="progressbar"></div>
@@ -165,11 +165,11 @@
         </div>
     </div>
 
-    <!-- Fakülte Dağılımı -->
+    <!-- Fakülte listesi -->
     <div class="col-md-7">
         <div class="card border-0 shadow-sm p-4 h-100">
             <div class="section-title">
-                <i class="bi bi-building me-2" style="color:#6c63ff;"></i>Fakülteye Göre Dağılım
+                <i class="bi bi-building me-2" style="color:#6c63ff;"></i>Fakülte Detayları
             </div>
             @if (ViewBag.ByFaculty != null)
             {
@@ -189,17 +189,12 @@
                     </div>
                 }
             }
-            else
-            {
-                <p style="color:#aaa;font-size:0.9rem;">Veri bulunamadı.</p>
-            }
         </div>
     </div>
 </div>
 
 <!-- Bölüm + Sektör -->
 <div class="row g-3">
-    <!-- Bölüm -->
     <div class="col-md-6">
         <div class="card border-0 shadow-sm p-4 h-100">
             <div class="section-title">
@@ -223,14 +218,8 @@
                     </div>
                 }
             }
-            else
-            {
-                <p style="color:#aaa;font-size:0.9rem;">Veri bulunamadı.</p>
-            }
         </div>
     </div>
-
-    <!-- Sektör -->
     <div class="col-md-6">
         <div class="card border-0 shadow-sm p-4 h-100">
             <div class="section-title">
@@ -254,10 +243,94 @@
                     </div>
                 }
             }
-            else
-            {
-                <p style="color:#aaa;font-size:0.9rem;">Veri bulunamadı.</p>
-            }
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Pasta Grafik - Çalışma Durumu
+        const pieCtx = document.getElementById('statusPieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Çalışıyor', 'İş Arıyor', 'Akademik', 'Belirtilmemiş'],
+                datasets: [{
+                    data: [@employed, @jobSeeking, @academic, @unspecified],
+                    backgroundColor: ['#22c55e', '#f59e0b', '#3b82f6', '#d1d5db'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 16,
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+
+        // Çubuk Grafik - Fakülte
+        const barCtx = document.getElementById('facultyBarChart').getContext('2d');
+        @{
+            var facultyLabels = "[]";
+            var facultyData = "[]";
+            if (ViewBag.ByFaculty != null)
+            {
+                var labels = new System.Text.StringBuilder("[");
+                var data = new System.Text.StringBuilder("[");
+                bool first = true;
+                foreach (var f in ViewBag.ByFaculty)
+                {
+                    if (!first) { labels.Append(","); data.Append(","); }
+                    labels.Append($"'{f.Faculty}'");
+                    data.Append(f.Count);
+                    first = false;
+                }
+                labels.Append("]");
+                data.Append("]");
+                facultyLabels = labels.ToString();
+                facultyData = data.ToString();
+            }
+        }
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(facultyLabels),
+                datasets: [{
+                    label: 'Mezun Sayısı',
+                    data: @Html.Raw(facultyData),
+                    backgroundColor: '#6c63ff',
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 },
+                        grid: { color: '#f0f0f0' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+}

@@ -46,47 +46,53 @@ namespace Alumni_Portal.Controllers
                 return View(model);
             }
 
-            // 1) Graduate kaydı
-           var graduate = new Graduate
-{
-    FirstName      = model.FirstName,
-    LastName       = model.LastName,
-    Email          = model.Email,
-    BirthDate      = model.BirthDate,
-    Faculty        = model.Faculty,
-    Department     = model.Department,
-    GraduationDate = model.GraduationDate,
-    CreatedDate    = DateTime.UtcNow,
-    UpdatedDate    = DateTime.UtcNow,
-    IsActive       = false  // Admin onayına kadar pasif
-};
+            // 1) Graduate kaydı — admin onayına kadar pasif
+            var graduate = new Graduate
+            {
+                FirstName      = model.FirstName,
+                LastName       = model.LastName,
+                Email          = model.Email,
+                BirthDate      = model.BirthDate,
+                Faculty        = model.Faculty,
+                Department     = model.Department,
+                GraduationDate = model.GraduationDate,
+                CreatedDate    = DateTime.UtcNow,
+                UpdatedDate    = DateTime.UtcNow,
+                IsActive       = false
+            };
 
             _context.Graduates.Add(graduate);
             await _context.SaveChangesAsync();
 
-            // Username otomatik oluştur
-            var username = model.Email.Split('@')[0];
+            // 2) Users kaydı — RLS sorunu olmadığı için IsActive = true
+            var userAccount = new UserAccount
+            {
+                Username   = model.Email.Split('@')[0],
+                FirstName  = model.FirstName,
+                LastName   = model.LastName,
+                Email      = model.Email,
+                UserType   = "graduate",
+                IsActive   = true,
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = DateTime.UtcNow
+            };
 
-            // 2) Users kaydı
-            var sql = @"
-INSERT INTO public.users 
-(username, first_name, last_name, email, password_hash, user_type, is_active, create_date, update_date, created_by)
-VALUES 
-(@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8,
-(SELECT user_id FROM public.user_schemas WHERE schema_name = current_user))";
+            _context.UserAccounts.Add(userAccount);
+            await _context.SaveChangesAsync();
 
-            await _context.Database.ExecuteSqlRawAsync(sql,
-                username,
-                model.FirstName,
-                model.LastName,
-                model.Email,
-                HashPassword(model.Password),
-                "graduate",
-                true,
-                DateTime.UtcNow,
-                DateTime.UtcNow);
+            // 3) UserAuth kaydı
+            var userAuth = new UserAuth
+            {
+                UserId       = userAccount.Id,
+                PasswordHash = HashPassword(model.Password),
+                CreatedAt    = DateTime.UtcNow,
+                UpdatedAt    = DateTime.UtcNow
+            };
 
-            TempData["Success"] = "Kayıt başarılı! Giriş yapabilirsiniz.";
+            _context.UserAuths.Add(userAuth);
+            await _context.SaveChangesAsync();
+
+            TempData["Pending"] = "Kayıt talebiniz alındı. Admin onayından sonra giriş yapabilirsiniz.";
             return RedirectToAction("Index", "Login");
         }
 

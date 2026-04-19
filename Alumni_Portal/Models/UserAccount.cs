@@ -5,7 +5,6 @@ namespace Alumni_Portal.Models
         public int Id { get; set; }
         public string? Username { get; set; }
         public string Email { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? UserType { get; set; }
@@ -18,8 +17,8 @@ namespace Alumni_Portal.Models
         public string? Phone { get; set; }
         public bool IsEmailVerified { get; set; }
         public DateTime? EmailVerifiedAt { get; set; }
-        public string? PasswordResetToken { get; set; }
-        public DateTime? PasswordResetExpires { get; set; }
         public string? LanguageCode { get; set; }
+        public string? PasswordHash { get; set; }
+        
     }
 }

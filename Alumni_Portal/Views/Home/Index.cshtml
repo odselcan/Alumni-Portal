@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Ana Sayfa";
+    var birthdays = ViewBag.Birthdays as List<Alumni_Portal.ViewModels.BirthdayViewModel>;
+    var announcements = ViewBag.Announcements as List<Alumni_Portal.Models.Announcement>;
 }
 
 <!-- İstatistik Kartları -->
@@ -67,11 +69,28 @@
                 <h6 style="font-weight:600;color:#1a1a2e;margin-bottom:20px;">
                     <i class="bi bi-megaphone-fill me-2" style="color:#6c63ff;"></i>Duyurular & Etkinlikler
                 </h6>
-                <div class="text-center py-5" style="color:#ccc;">
-                    <i class="bi bi-inbox" style="font-size:3rem;"></i>
-                    <p class="mt-3 mb-0" style="font-size:0.9rem;color:#aaa;">Henüz duyuru bulunmuyor.</p>
-                    <p style="font-size:0.82rem;color:#bbb;">Duyurular buraya eklenecek.</p>
-                </div>
+                @if (announcements != null && announcements.Count > 0)
+                {
+                    foreach (var a in announcements)
+                    {
+                        <div class="mb-3 p-3" style="border-radius:10px;background:#f8f8ff;border-left:3px solid #6c63ff;">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <div style="font-weight:600;color:#1a1a2e;font-size:0.95rem;">@a.Title</div>
+                                <span style="font-size:0.75rem;color:#aaa;">
+                                    @(a.CreateDate?.ToString("dd.MM.yyyy") ?? "")
+                                </span>
+                            </div>
+                            <div style="font-size:0.85rem;color:#666;line-height:1.6;">@a.Content</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5" style="color:#ccc;">
+                        <i class="bi bi-inbox" style="font-size:3rem;"></i>
+                        <p class="mt-3 mb-0" style="font-size:0.9rem;color:#aaa;">Henüz duyuru bulunmuyor.</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -83,9 +102,6 @@
                 <h6 style="font-weight:600;color:#1a1a2e;margin-bottom:20px;">
                     <i class="bi bi-balloon-heart-fill me-2" style="color:#f43f5e;"></i>Bugünün Doğum Günleri
                 </h6>
-                @{
-                    var birthdays = ViewBag.Birthdays as List<Alumni_Portal.ViewModels.BirthdayViewModel>;
-                }
                 @if (birthdays != null && birthdays.Count > 0)
                 {
                     foreach (var b in birthdays)

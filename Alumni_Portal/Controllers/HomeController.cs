@@ -26,7 +26,7 @@ namespace Alumni_Portal.Controllers
             var academic = await _context.GraduateCareers
                 .CountAsync(c => c.EmploymentStatus == "academic");
 
-            // Doğum günleri — bugün ay ve gün eşleşenler
+            // Doğum günleri
             var today = DateTime.Today;
             var birthdays = await _context.Graduates
                 .Where(g => g.BirthDate != null
@@ -40,11 +40,18 @@ namespace Alumni_Portal.Controllers
                 })
                 .ToListAsync();
 
+            // Duyurular
+            var announcements = await _context.Announcements
+                .Where(a => a.IsActive)
+                .OrderByDescending(a => a.CreateDate)
+                .ToListAsync();
+                
             ViewBag.TotalGraduates = totalGraduates;
             ViewBag.Employed       = employed;
             ViewBag.JobSeeking     = jobSeeking;
             ViewBag.Academic       = academic;
             ViewBag.Birthdays      = birthdays;
+            ViewBag.Announcements  = announcements;
             ViewBag.UserName       = User.Identity!.Name;
 
             return View();

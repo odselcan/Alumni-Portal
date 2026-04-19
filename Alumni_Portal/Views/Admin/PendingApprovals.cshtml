@@ -7,25 +7,25 @@
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-        <i class="bi bi-check-circle me-1"></i> @TempData["Success"]
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
-        <div class="d-flex align-items-center justify-content-between p-4 pb-0">
+        <div class="d-flex align-items-center justify-content-between p-4">
             <h6 style="font-weight:600;color:#1a1a2e;margin:0;">
-                <i class="bi bi-hourglass-split me-2" style="color:#6c63ff;"></i>
-                Onay Bekleyen Mezunlar
-                <span class="badge ms-2" style="background:#ede9ff;color:#6c63ff;font-size:0.78rem;">
+                <i class="bi bi-hourglass-split me-2" style="color:#f59e0b;"></i>
+                Onay Bekleyen Kayıtlar
+                <span class="badge ms-2" style="background:#fff7e6;color:#f59e0b;font-size:0.78rem;">
                     @Model.Count kişi
                 </span>
             </h6>
         </div>
 
-        <div class="table-responsive mt-3">
+        <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead style="background:#f8f8ff;">
                     <tr>
@@ -41,8 +41,8 @@
                     {
                         <tr>
                             <td colspan="5" class="text-center py-5" style="color:#aaa;">
-                                <i class="bi bi-check2-circle" style="font-size:2.5rem;color:#22c55e;"></i>
-                                <p class="mt-2 mb-0">Onay bekleyen kayıt yok.</p>
+                                <i class="bi bi-check-all" style="font-size:2.5rem;color:#22c55e;"></i>
+                                <p class="mt-2 mb-0">Onay bekleyen kayıt bulunmuyor.</p>
                             </td>
                         </tr>
                     }
@@ -69,32 +69,29 @@
                                 </td>
                                 <td class="py-3">
                                     <span style="font-size:0.88rem;color:#555;">
-                                        @(g.GraduationDate.HasValue ? g.GraduationDate.Value.ToString("MM/yyyy") : "-")
+                                        @(g.GraduationDate?.ToString("MM/yyyy") ?? "-")
                                     </span>
                                 </td>
                                 <td class="py-3">
-                                    <span style="font-size:0.82rem;color:#888;">
-                                        @(g.CreatedDate.HasValue ? g.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")
+                                    <span style="font-size:0.85rem;color:#888;">
+                                        @(g.CreatedDate?.ToString("dd.MM.yyyy HH:mm") ?? "-")
                                     </span>
                                 </td>
                                 <td class="py-3">
                                     <div class="d-flex gap-2">
-                                        <form method="post"
-                                              asp-action="Approve"
-                                              asp-controller="Admin"
-                                              asp-route-id="@g.GraduateId">
+                                        <form asp-action="Approve" asp-route-id="@g.GraduateId" method="post">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Onayla">
+                                            <button type="submit" class="btn btn-sm text-white fw-semibold"
+                                                    style="background:#22c55e;border-radius:6px;font-size:0.82rem;"
+                                                    onclick="return confirm('Bu kaydı onaylamak istediğinize emin misiniz?')">
                                                 <i class="bi bi-check-lg me-1"></i> Onayla
                                             </button>
                                         </form>
-                                        <form method="post"
-                                              asp-action="Reject"
-                                              asp-controller="Admin"
-                                              asp-route-id="@g.GraduateId"
-                                              onsubmit="return confirm('@g.FirstName @g.LastName adlı kaydı reddetmek istediğinize emin misiniz?')">
+                                        <form asp-action="Reject" asp-route-id="@g.GraduateId" method="post">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Reddet">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    style="border-radius:6px;font-size:0.82rem;"
+                                                    onclick="return confirm('Bu kaydı reddetmek istediğinize emin misiniz? Kayıt silinecek!')">
                                                 <i class="bi bi-x-lg me-1"></i> Reddet
                                             </button>
                                         </form>

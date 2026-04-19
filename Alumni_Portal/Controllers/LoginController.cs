@@ -18,7 +18,6 @@ namespace Alumni_Portal.Controllers
             _context = context;
         }
 
-        // GET: /Login/Index
         public IActionResult Index()
         {
             if (User.Identity!.IsAuthenticated)
@@ -27,7 +26,6 @@ namespace Alumni_Portal.Controllers
             return View();
         }
 
-        // POST: /Login/Index
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(LoginViewModel model)
@@ -47,9 +45,19 @@ namespace Alumni_Portal.Controllers
                 return View(model);
             }
 
-            // Kullanıcıya ait graduate kaydını bul
+            // Graduate kaydını bul
             var graduate = await _context.Graduates
                 .FirstOrDefaultAsync(g => g.Email == user.Email);
+
+            // Admin değilse graduate onay kontrolü
+            if (user.UserType != "admin")
+            {
+                if (graduate == null || !graduate.IsActive)
+                {
+                    ModelState.AddModelError("", "Hesabınız henüz onaylanmamış. Lütfen admin onayını bekleyiniz.");
+                    return View(model);
+                }
+            }
 
             var claims = new List<Claim>
             {
@@ -75,7 +83,6 @@ namespace Alumni_Portal.Controllers
                 return RedirectToAction("Index", "Home");
         }
 
-        // POST: /Login/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -84,7 +91,6 @@ namespace Alumni_Portal.Controllers
             return RedirectToAction("Index", "Login");
         }
 
-        // GET: /Login/AccessDenied
         public IActionResult AccessDenied()
         {
             return View();

@@ -66,11 +66,10 @@ namespace Alumni_Portal.Controllers
 
             if (graduate == null) return NotFound();
 
-            // İletişim bilgilerini güncelle
             graduate.Email = model.Email;
             graduate.Phone = model.Phone;
 
-            // Kariyer bilgilerini güncelle
+
           if (graduate.GraduateCareer == null)
 {
     var maxCareerId = await _context.GraduateCareers

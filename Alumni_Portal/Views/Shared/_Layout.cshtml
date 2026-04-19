@@ -62,6 +62,14 @@
             border-left-color: white;
         }
         .sidebar-nav a i { font-size: 1.1rem; width: 22px; }
+        .sidebar-section {
+            padding: 8px 24px 4px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 8px;
+        }
         .sidebar-footer {
             padding: 20px 24px;
             border-top: 1px solid rgba(255,255,255,0.15);
@@ -143,6 +151,7 @@
             <p>Mezun Yönetim Sistemi</p>
         </div>
         <nav class="sidebar-nav">
+            <!-- Mezun Menüsü -->
             <a asp-controller="Home" asp-action="Index"
                class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
                 <i class="bi bi-house-door"></i> Ana Sayfa
@@ -151,21 +160,28 @@
                class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")">
                 <i class="bi bi-person-circle"></i> Profilim
             </a>
-           @if (User.IsInRole("admin"))
-{
-    <a asp-controller="Admin" asp-action="Index"
-       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
-        <i class="bi bi-people"></i> Mezun Listesi
-    </a>
-    <a asp-controller="Admin" asp-action="PendingApprovals"
-       class="@(ViewContext.RouteData.Values["action"]?.ToString() == "PendingApprovals" ? "active" : "")">
-        <i class="bi bi-hourglass-split"></i> Onay Bekleyenler
-    </a>
-    <a asp-controller="Admin" asp-action="Statistics"
-       class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Statistics" ? "active" : "")">
-        <i class="bi bi-bar-chart-line"></i> İstatistikler
-    </a>
-}
+
+            <!-- Admin Menüsü -->
+            @if (User.IsInRole("admin"))
+            {
+                <div class="sidebar-section">Yönetim</div>
+                <a asp-controller="Admin" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <i class="bi bi-people"></i> Mezun Listesi
+                </a>
+                <a asp-controller="Admin" asp-action="PendingApprovals"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "PendingApprovals" ? "active" : "")">
+                    <i class="bi bi-hourglass-split"></i> Onay Bekleyenler
+                </a>
+                <a asp-controller="Admin" asp-action="Statistics"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Statistics" ? "active" : "")">
+                    <i class="bi bi-bar-chart-line"></i> İstatistikler
+                </a>
+                <a asp-controller="Announcement" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Announcement" ? "active" : "")">
+                    <i class="bi bi-megaphone"></i> Duyurular
+                </a>
+            }
         </nav>
         <div class="sidebar-footer">
             <form asp-controller="Login" asp-action="Logout" method="post">
