@@ -14,6 +14,7 @@ namespace Alumni_Portal.Data
         public DbSet<GraduateCareer> GraduateCareers { get; set; } = null!;
         public DbSet<Announcement> Announcements { get; set; } = null!;
         public DbSet<UserAuth> UserAuths { get; set; } = null!;
+        public DbSet<UserSchema> UserSchemas { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +40,14 @@ namespace Alumni_Portal.Data
                 entity.Property(e => e.ArchiveAction).HasColumnName("archive_action");
                 entity.Property(e => e.ArchiveDate).HasColumnName("archive_date");
             });
+            modelBuilder.Entity<UserSchema>(entity =>
+{
+    entity.ToTable("user_schemas", "public");
+    entity.HasKey(e => e.Id);
+    entity.Property(e => e.Id).HasColumnName("id");
+    entity.Property(e => e.UserId).HasColumnName("user_id");
+    entity.Property(e => e.SchemaName).HasColumnName("schema_name");
+});
 
             modelBuilder.Entity<UserAccount>(entity =>
             {

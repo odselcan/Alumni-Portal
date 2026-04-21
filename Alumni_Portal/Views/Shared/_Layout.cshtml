@@ -177,6 +177,10 @@
                    class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Statistics" ? "active" : "")">
                     <i class="bi bi-bar-chart-line"></i> İstatistikler
                 </a>
+                <a asp-controller="Admin" asp-action="CreateAdmin"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "CreateAdmin" ? "active" : "")">
+                    <i class="bi bi-shield-plus"></i> Admin Ekle
+                </a>
                 <a asp-controller="Announcement" asp-action="Index"
                    class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Announcement" ? "active" : "")">
                     <i class="bi bi-megaphone"></i> Duyurular

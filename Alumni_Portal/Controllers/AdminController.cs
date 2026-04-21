@@ -1,4 +1,6 @@
 using Alumni_Portal.Data;
+using Alumni_Portal.Models;
+using Alumni_Portal.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,8 @@ using OfficeOpenXml.Style;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Alumni_Portal.Controllers
 {
@@ -23,8 +27,15 @@ namespace Alumni_Portal.Controllers
         // Mezun Listesi
         public async Task<IActionResult> Index(string? search, string? faculty, string? employmentStatus)
         {
+            // Admin emaillerini hariç tut
+            var adminEmails = await _context.UserAccounts
+                .Where(u => u.UserType == "admin")
+                .Select(u => u.Email)
+                .ToListAsync();
+
             var query = _context.Graduates
                 .Include(g => g.GraduateCareer)
+                .Where(g => g.IsActive && !adminEmails.Contains(g.Email!))
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
@@ -42,7 +53,7 @@ namespace Alumni_Portal.Controllers
             var graduates = await query.ToListAsync();
 
             var faculties = await _context.Graduates
-                .Where(g => g.Faculty != null)
+                .Where(g => g.Faculty != null && g.IsActive && !adminEmails.Contains(g.Email!))
                 .Select(g => g.Faculty!)
                 .Distinct()
                 .ToListAsync();
@@ -66,7 +77,6 @@ namespace Alumni_Portal.Controllers
             if (graduate == null)
                 return NotFound();
 
-            // Önce kariyer kaydını sil (FK constraint)
             if (graduate.GraduateCareer != null)
                 _context.GraduateCareers.Remove(graduate.GraduateCareer);
 
@@ -80,7 +90,13 @@ namespace Alumni_Portal.Controllers
         // İstatistikler
         public async Task<IActionResult> Statistics()
         {
-            var totalGraduates = await _context.Graduates.CountAsync();
+            var adminEmails = await _context.UserAccounts
+                .Where(u => u.UserType == "admin")
+                .Select(u => u.Email)
+                .ToListAsync();
+
+            var totalGraduates = await _context.Graduates
+                .CountAsync(g => g.IsActive && !adminEmails.Contains(g.Email!));
             var employed = await _context.GraduateCareers
                 .CountAsync(c => c.EmploymentStatus == "employed");
             var jobSeeking = await _context.GraduateCareers
@@ -90,13 +106,13 @@ namespace Alumni_Portal.Controllers
             var unspecified = totalGraduates - employed - jobSeeking - academic;
 
             var byFaculty = await _context.Graduates
-                .Where(g => g.Faculty != null)
+                .Where(g => g.Faculty != null && g.IsActive && !adminEmails.Contains(g.Email!))
                 .GroupBy(g => g.Faculty)
                 .Select(g => new { Faculty = g.Key, Count = g.Count() })
                 .ToListAsync();
 
             var byDepartment = await _context.Graduates
-                .Where(g => g.Department != null)
+                .Where(g => g.Department != null && g.IsActive && !adminEmails.Contains(g.Email!))
                 .GroupBy(g => g.Department)
                 .Select(g => new { Department = g.Key, Count = g.Count() })
                 .ToListAsync();
@@ -124,8 +140,14 @@ namespace Alumni_Portal.Controllers
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
+            var adminEmails = await _context.UserAccounts
+                .Where(u => u.UserType == "admin")
+                .Select(u => u.Email)
+                .ToListAsync();
+
             var graduates = await _context.Graduates
                 .Include(g => g.GraduateCareer)
+                .Where(g => g.IsActive && !adminEmails.Contains(g.Email!))
                 .ToListAsync();
 
             using var package = new ExcelPackage();
@@ -181,8 +203,14 @@ namespace Alumni_Portal.Controllers
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
+            var adminEmails = await _context.UserAccounts
+                .Where(u => u.UserType == "admin")
+                .Select(u => u.Email)
+                .ToListAsync();
+
             var graduates = await _context.Graduates
                 .Include(g => g.GraduateCareer)
+                .Where(g => g.IsActive && !adminEmails.Contains(g.Email!))
                 .ToListAsync();
 
             var pdf = Document.Create(container =>
@@ -263,50 +291,115 @@ namespace Alumni_Portal.Controllers
             var bytes = pdf.GeneratePdf();
             return File(bytes, "application/pdf", $"Mezunlar_{DateTime.Now:yyyyMMdd}.pdf");
         }
+
         // Onay Bekleyenler
-public async Task<IActionResult> PendingApprovals()
-{
-    var pending = await _context.Graduates
-        .Where(g => g.IsActive == false)
-        .OrderByDescending(g => g.CreatedDate)
-        .ToListAsync();
+        public async Task<IActionResult> PendingApprovals()
+        {
+            var adminEmails = await _context.UserAccounts
+                .Where(u => u.UserType == "admin")
+                .Select(u => u.Email)
+                .ToListAsync();
 
-    return View(pending);
-}
+            var pending = await _context.Graduates
+                .Where(g => g.IsActive == false && !adminEmails.Contains(g.Email!))
+                .OrderByDescending(g => g.CreatedDate)
+                .ToListAsync();
 
-// Onayla
-[HttpPost]
-public async Task<IActionResult> Approve(int id)
-{
-    var graduate = await _context.Graduates.FindAsync(id);
-    if (graduate == null) return NotFound();
+            return View(pending);
+        }
 
-    graduate.IsActive  = true;
-    graduate.UpdatedDate = DateTime.UtcNow;
-    await _context.SaveChangesAsync();
+        // Onayla
+        [HttpPost]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var graduate = await _context.Graduates.FindAsync(id);
+            if (graduate == null) return NotFound();
 
-    TempData["Success"] = $"{graduate.FirstName} {graduate.LastName} onaylandı.";
-    return RedirectToAction("PendingApprovals");
-}
+            graduate.IsActive = true;
+            graduate.UpdatedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
 
-// Reddet
-[HttpPost]
-public async Task<IActionResult> Reject(int id)
-{
-    var graduate = await _context.Graduates
-        .Include(g => g.GraduateCareer)
-        .FirstOrDefaultAsync(g => g.GraduateId == id);
+            TempData["Success"] = $"{graduate.FirstName} {graduate.LastName} onaylandı.";
+            return RedirectToAction("PendingApprovals");
+        }
 
-    if (graduate == null) return NotFound();
+        // Reddet
+        [HttpPost]
+        public async Task<IActionResult> Reject(int id)
+        {
+            var graduate = await _context.Graduates
+                .Include(g => g.GraduateCareer)
+                .FirstOrDefaultAsync(g => g.GraduateId == id);
 
-    if (graduate.GraduateCareer != null)
-        _context.GraduateCareers.Remove(graduate.GraduateCareer);
+            if (graduate == null) return NotFound();
 
-    _context.Graduates.Remove(graduate);
-    await _context.SaveChangesAsync();
+            if (graduate.GraduateCareer != null)
+                _context.GraduateCareers.Remove(graduate.GraduateCareer);
 
-    TempData["Success"] = "Kayıt reddedildi ve silindi.";
-    return RedirectToAction("PendingApprovals");
-}
+            _context.Graduates.Remove(graduate);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Kayıt reddedildi ve silindi.";
+            return RedirectToAction("PendingApprovals");
+        }
+
+        // Admin Oluştur - GET
+        public IActionResult CreateAdmin()
+        {
+            return View();
+        }
+
+        // Admin Oluştur - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAdmin(AdminCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            bool emailExists = await _context.UserAccounts
+                .AnyAsync(u => u.Email == model.Email);
+
+            if (emailExists)
+            {
+                ModelState.AddModelError("Email", "Bu e-posta adresi zaten kayıtlı.");
+                return View(model);
+            }
+
+            int? createdBy = null;
+            try
+            {
+                var schemaEntry = await _context.UserSchemas.FirstOrDefaultAsync();
+                createdBy = schemaEntry?.UserId;
+            }
+            catch { }
+
+            var userAccount = new UserAccount
+            {
+                Username     = model.Email.Split('@')[0],
+                FirstName    = model.FirstName,
+                LastName     = model.LastName,
+                Email        = model.Email,
+                PasswordHash = HashPassword(model.Password),
+                UserType     = "admin",
+                IsActive     = true,
+                CreatedBy    = createdBy,
+                CreateDate   = DateTime.UtcNow,
+                UpdateDate   = DateTime.UtcNow
+            };
+
+            _context.UserAccounts.Add(userAccount);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{model.FirstName} {model.LastName} admin olarak eklendi.";
+            return RedirectToAction("Index");
+        }
+
+        private static string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToHexString(bytes).ToLower();
+        }
     }
 }

@@ -51,7 +51,6 @@
     </div>
 </div>
 
-<!-- Bildirim -->
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
@@ -165,10 +164,7 @@
                                     <div style="font-size:0.82rem;color:#555;">@(g.Phone ?? "-")</div>
                                 </td>
                                 <td class="py-3">
-                                    <form method="post"
-                                          asp-action="Delete"
-                                          asp-controller="Admin"
-                                          asp-route-id="@g.GraduateId"
+                                    <form method="post" asp-action="Delete" asp-controller="Admin" asp-route-id="@g.GraduateId"
                                           onsubmit="return confirm('@g.FirstName @g.LastName adlı mezunu silmek istediğinize emin misiniz?')">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Sil">

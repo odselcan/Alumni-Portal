@@ -64,32 +64,32 @@ namespace Alumni_Portal.Controllers
             _context.Graduates.Add(graduate);
             await _context.SaveChangesAsync();
 
-            // 2) Users kaydı — RLS sorunu olmadığı için IsActive = true
+            // created_by için user_schemas'tan user_id al
+            int? createdBy = null;
+            try
+            {
+                var schemaEntry = await _context.UserSchemas
+                    .FirstOrDefaultAsync();
+                createdBy = schemaEntry?.UserId;
+            }
+            catch { }
+
+            // 2) Users kaydı
             var userAccount = new UserAccount
             {
-                Username   = model.Email.Split('@')[0],
-                FirstName  = model.FirstName,
-                LastName   = model.LastName,
-                Email      = model.Email,
-                UserType   = "graduate",
-                IsActive   = true,
-                CreateDate = DateTime.UtcNow,
-                UpdateDate = DateTime.UtcNow
+                Username     = model.Email.Split('@')[0],
+                FirstName    = model.FirstName,
+                LastName     = model.LastName,
+                Email        = model.Email,
+                PasswordHash = HashPassword(model.Password),
+                UserType     = "graduate",
+                IsActive     = true,
+                CreatedBy    = createdBy,
+                CreateDate   = DateTime.UtcNow,
+                UpdateDate   = DateTime.UtcNow
             };
 
             _context.UserAccounts.Add(userAccount);
-            await _context.SaveChangesAsync();
-
-            // 3) UserAuth kaydı
-            var userAuth = new UserAuth
-            {
-                UserId       = userAccount.Id,
-                PasswordHash = HashPassword(model.Password),
-                CreatedAt    = DateTime.UtcNow,
-                UpdatedAt    = DateTime.UtcNow
-            };
-
-            _context.UserAuths.Add(userAuth);
             await _context.SaveChangesAsync();
 
             TempData["Pending"] = "Kayıt talebiniz alındı. Admin onayından sonra giriş yapabilirsiniz.";

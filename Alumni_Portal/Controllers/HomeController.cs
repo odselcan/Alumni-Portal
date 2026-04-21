@@ -18,7 +18,8 @@ namespace Alumni_Portal.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var totalGraduates = await _context.Graduates.CountAsync();
+            var totalGraduates = await _context.Graduates
+                .CountAsync(g => g.IsActive);
             var employed = await _context.GraduateCareers
                 .CountAsync(c => c.EmploymentStatus == "employed");
             var jobSeeking = await _context.GraduateCareers
@@ -29,7 +30,8 @@ namespace Alumni_Portal.Controllers
             // Doğum günleri
             var today = DateTime.Today;
             var birthdays = await _context.Graduates
-                .Where(g => g.BirthDate != null
+                .Where(g => g.IsActive
+                         && g.BirthDate != null
                          && g.BirthDate.Value.Month == today.Month
                          && g.BirthDate.Value.Day == today.Day)
                 .Select(g => new BirthdayViewModel
@@ -45,7 +47,7 @@ namespace Alumni_Portal.Controllers
                 .Where(a => a.IsActive)
                 .OrderByDescending(a => a.CreateDate)
                 .ToListAsync();
-                
+
             ViewBag.TotalGraduates = totalGraduates;
             ViewBag.Employed       = employed;
             ViewBag.JobSeeking     = jobSeeking;
