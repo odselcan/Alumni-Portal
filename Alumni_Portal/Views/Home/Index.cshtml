@@ -73,15 +73,20 @@
                 {
                     foreach (var a in announcements)
                     {
-                        <div class="mb-3 p-3" style="border-radius:10px;background:#f8f8ff;border-left:3px solid #6c63ff;">
-                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                <div style="font-weight:600;color:#1a1a2e;font-size:0.95rem;">@a.Title</div>
-                                <span style="font-size:0.75rem;color:#aaa;">
-                                    @(a.CreateDate?.ToString("dd.MM.yyyy") ?? "")
-                                </span>
+                        <a asp-controller="Announcement" asp-action="Detail" asp-route-id="@a.AnnouncementId"
+                           style="text-decoration:none;">
+                            <div class="mb-3 p-3" style="border-radius:10px;background:#f8f8ff;border-left:3px solid #6c63ff;cursor:pointer;transition:background 0.2s;"
+                                 onmouseover="this.style.background='#ede9ff'"
+                                 onmouseout="this.style.background='#f8f8ff'">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div style="font-weight:600;color:#1a1a2e;font-size:0.95rem;">@a.Title</div>
+                                    <span style="font-size:0.75rem;color:#aaa;">
+                                        @(a.CreateDate?.ToString("dd.MM.yyyy") ?? "")
+                                    </span>
+                                </div>
+                                <div style="font-size:0.85rem;color:#666;line-height:1.6;">@a.Content</div>
                             </div>
-                            <div style="font-size:0.85rem;color:#666;line-height:1.6;">@a.Content</div>
-                        </div>
+                        </a>
                     }
                 }
                 else

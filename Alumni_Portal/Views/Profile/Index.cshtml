@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Profilim";
+    bool isAdmin = ViewBag.IsAdmin == true;
 }
 
 <div class="container py-4">
@@ -26,28 +27,38 @@
                         </span>
                     </div>
                     <h5 class="fw-bold mb-1">@Model.FirstName @Model.LastName</h5>
-                    <p class="text-muted small mb-3">@Model.Department</p>
 
-                    <hr />
+                    @if (isAdmin)
+                    {
+                        <span class="badge mb-3" style="background-color:#6c63ff;">Yönetici</span>
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-3">@Model.Department</p>
+                    }
 
-                    <div class="text-start">
-                        <div class="mb-3">
-                            <label class="info-label">Fakülte</label>
-                            <p class="info-value">@(Model.Faculty ?? "—")</p>
+                    @if (!isAdmin)
+                    {
+                        <hr />
+                        <div class="text-start">
+                            <div class="mb-3">
+                                <label class="info-label">Fakülte</label>
+                                <p class="info-value">@(Model.Faculty ?? "—")</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="info-label">Bölüm</label>
+                                <p class="info-value">@(Model.Department ?? "—")</p>
+                            </div>
+                            <div class="mb-0">
+                                <label class="info-label">Mezuniyet Tarihi</label>
+                                <p class="info-value">
+                                    @(Model.GraduationDate.HasValue
+                                        ? Model.GraduationDate.Value.ToString("MMMM yyyy")
+                                        : "—")
+                                </p>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="info-label">Bölüm</label>
-                            <p class="info-value">@(Model.Department ?? "—")</p>
-                        </div>
-                        <div class="mb-0">
-                            <label class="info-label">Mezuniyet Tarihi</label>
-                            <p class="info-value">
-                                @(Model.GraduationDate.HasValue 
-                                    ? Model.GraduationDate.Value.ToString("MMMM yyyy") 
-                                    : "—")
-                            </p>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -68,10 +79,17 @@
                     <div class="card-body px-4 pb-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label asp-for="Email" class="form-label">E-posta</label>
-                                <input asp-for="Email" class="form-control" />
-                                <span asp-validation-for="Email" class="text-danger small"></span>
-                            </div>
+    <label asp-for="Email" class="form-label">E-posta</label>
+    @if (isAdmin)
+    {
+        <input asp-for="Email" class="form-control" readonly />
+    }
+    else
+    {
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    }
+</div>
                             <div class="col-md-6">
                                 <label asp-for="Phone" class="form-label">Telefon</label>
                                 <input asp-for="Phone" class="form-control" placeholder="05XX XXX XX XX" />
@@ -80,45 +98,48 @@
                     </div>
                 </div>
 
-                <!-- Kariyer Bilgileri -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white border-0 pt-4 px-4">
-                        <h6 class="fw-bold mb-0" style="color:#6c63ff;">
-                            Kariyer Bilgileri
-                        </h6>
-                        <small class="text-muted">Bu bilgileri güncelleyebilirsiniz</small>
-                    </div>
-                    <div class="card-body px-4 pb-4">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label asp-for="EmploymentStatus" class="form-label">Çalışma Durumu</label>
-                                <select asp-for="EmploymentStatus" class="form-select">
-                                    <option value="">Seçiniz</option>
-                                    <option value="employed">Çalışıyor</option>
-                                    <option value="job_seeking">İş Arıyor</option>
-                                    <option value="academic">Akademik</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="StartYear" class="form-label">İşe Başlama Yılı</label>
-                                <input asp-for="StartYear" class="form-control" placeholder="2023" />
-                                <span asp-validation-for="StartYear" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="CompanyName" class="form-label">Şirket Adı</label>
-                                <input asp-for="CompanyName" class="form-control" />
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Position" class="form-label">Pozisyon</label>
-                                <input asp-for="Position" class="form-control" />
-                            </div>
-                            <div class="col-12">
-                                <label asp-for="Sector" class="form-label">Sektör</label>
-                                <input asp-for="Sector" class="form-control" />
+                <!-- Kariyer Bilgileri — sadece mezunlar için -->
+                @if (!isAdmin)
+                {
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h6 class="fw-bold mb-0" style="color:#6c63ff;">
+                                Kariyer Bilgileri
+                            </h6>
+                            <small class="text-muted">Bu bilgileri güncelleyebilirsiniz</small>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="EmploymentStatus" class="form-label">Çalışma Durumu</label>
+                                    <select asp-for="EmploymentStatus" class="form-select">
+                                        <option value="">Seçiniz</option>
+                                        <option value="employed">Çalışıyor</option>
+                                        <option value="job_seeking">İş Arıyor</option>
+                                        <option value="academic">Akademik</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="StartYear" class="form-label">İşe Başlama Yılı</label>
+                                    <input asp-for="StartYear" class="form-control" placeholder="2023" type="text"/>
+                                    <span asp-validation-for="StartYear" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="CompanyName" class="form-label">Şirket Adı</label>
+                                    <input asp-for="CompanyName" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Position" class="form-label">Pozisyon</label>
+                                    <input asp-for="Position" class="form-control" />
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Sector" class="form-label">Sektör</label>
+                                    <input asp-for="Sector" class="form-control" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
 
                 <div class="text-end">
                     <button type="submit" class="btn px-4 py-2 text-white fw-semibold"
@@ -171,5 +192,10 @@
     .form-control:focus, .form-select:focus {
         border-color: #6c63ff;
         box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+    }
+    .form-control[readonly] {
+        background-color: #f8f8f8;
+        color: #888;
+        cursor: not-allowed;
     }
 </style>

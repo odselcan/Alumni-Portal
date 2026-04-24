@@ -17,7 +17,16 @@ namespace Alumni_Portal.Controllers
         {
             _context = context;
         }
+         // GET: /Announcement/Detail/5
+public async Task<IActionResult> Detail(int id)
+{
+    var announcement = await _context.Announcements
+        .FirstOrDefaultAsync(a => a.AnnouncementId == id && a.IsActive);
 
+    if (announcement == null) return NotFound();
+
+    return View(announcement);
+}
         // GET: /Announcement/Index
         public async Task<IActionResult> Index()
         {

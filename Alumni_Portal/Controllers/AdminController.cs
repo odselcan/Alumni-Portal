@@ -27,7 +27,6 @@ namespace Alumni_Portal.Controllers
         // Mezun Listesi
         public async Task<IActionResult> Index(string? search, string? faculty, string? employmentStatus)
         {
-            // Admin emaillerini hariç tut
             var adminEmails = await _context.UserAccounts
                 .Where(u => u.UserType == "admin")
                 .Select(u => u.Email)
@@ -77,10 +76,24 @@ namespace Alumni_Portal.Controllers
             if (graduate == null)
                 return NotFound();
 
+            var userAccount = await _context.UserAccounts
+                .FirstOrDefaultAsync(u => u.Email == graduate.Email);
+
             if (graduate.GraduateCareer != null)
                 _context.GraduateCareers.Remove(graduate.GraduateCareer);
 
             _context.Graduates.Remove(graduate);
+
+            if (userAccount != null)
+            {
+                var userAuth = await _context.UserAuths
+                    .FirstOrDefaultAsync(a => a.UserId == userAccount.Id);
+                if (userAuth != null)
+                    _context.UserAuths.Remove(userAuth);
+
+                _context.UserAccounts.Remove(userAccount);
+            }
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Mezun başarıyla silindi.";
@@ -333,10 +346,24 @@ namespace Alumni_Portal.Controllers
 
             if (graduate == null) return NotFound();
 
+            var userAccount = await _context.UserAccounts
+                .FirstOrDefaultAsync(u => u.Email == graduate.Email);
+
             if (graduate.GraduateCareer != null)
                 _context.GraduateCareers.Remove(graduate.GraduateCareer);
 
             _context.Graduates.Remove(graduate);
+
+            if (userAccount != null)
+            {
+                var userAuth = await _context.UserAuths
+                    .FirstOrDefaultAsync(a => a.UserId == userAccount.Id);
+                if (userAuth != null)
+                    _context.UserAuths.Remove(userAuth);
+
+                _context.UserAccounts.Remove(userAccount);
+            }
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Kayıt reddedildi ve silindi.";
