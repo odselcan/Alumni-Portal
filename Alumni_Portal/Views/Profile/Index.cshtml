@@ -1,0 +1,368 @@
+@model Alumni_Portal.ViewModels.ProfileViewModel
+@using Alumni_Portal.Models
+
+@{
+    ViewData["Title"] = L["Profile"];
+    bool isAdmin = ViewBag.IsAdmin == true;
+
+    var sectors     = ViewBag.Sectors     as List<CareerSector>     ?? new();
+    var professions = ViewBag.Professions as List<CareerProfession> ?? new();
+    var positions   = ViewBag.Positions   as List<CareerPosition>   ?? new();
+
+    int? preselectedSectorId     = ViewBag.SelectedSectorId     as int?;
+    int? preselectedProfessionId = ViewBag.SelectedProfessionId as int?;
+}
+
+<div class="container py-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Sol Panel: Fotoğraf + Bilgiler -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                    {
+                        <img src="@Model.ProfileImageUrl" alt="@L["ChangePhotoBtn"]"
+                             style="width:90px;height:90px;border-radius:50%;object-fit:cover;
+                                    border:3px solid #cc0000;box-shadow:0 2px 12px rgba(204,0,0,0.2);
+                                    margin-bottom:12px;" />
+                    }
+                    else
+                    {
+                        <div class="avatar-circle mx-auto mb-3">
+                            <span class="avatar-initials">
+                                @(Model.FirstName?.Substring(0,1))@(Model.LastName?.Substring(0,1))
+                            </span>
+                        </div>
+                    }
+
+                    <form asp-action="UploadPhoto" asp-controller="Profile" method="post" enctype="multipart/form-data" class="mb-3">
+                        @Html.AntiForgeryToken()
+                        <label style="cursor:pointer;" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-camera me-1"></i>@L["ChangePhotoBtn"]
+                            <input type="file" name="photo" accept=".jpg,.jpeg,.png,.webp"
+                                   style="display:none;" onchange="this.form.submit()" />
+                        </label>
+                    </form>
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger p-2" style="font-size:0.82rem;">@TempData["Error"]</div>
+                    }
+
+                    <h5 class="fw-bold mb-1">@Model.FirstName @Model.LastName</h5>
+
+                    @if (isAdmin)
+                    {
+                        <span class="badge mb-3" style="background-color:#cc0000;">@L["Admin"]</span>
+                    }
+                    else
+                    {
+                        <p class="text-muted small mb-3">@Model.Department</p>
+                    }
+
+                    @if (!isAdmin)
+                    {
+                        <hr />
+                        <div class="text-start">
+                            <div class="mb-3">
+                                <label class="info-label">@L["Faculty"]</label>
+                                <p class="info-value">@(Model.Faculty ?? "—")</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="info-label">@L["Department"]</label>
+                                <p class="info-value">@(Model.Department ?? "—")</p>
+                            </div>
+                            <div class="mb-0">
+                                <label class="info-label">@L["Graduation"]</label>
+                                <p class="info-value">
+                                    @if (Model.GraduationDate.HasValue)
+                                    {
+                                        var ay    = Model.GraduationDate.Value.Month;
+                                        var yil   = Model.GraduationDate.Value.Year;
+                                        var donem = (ay >= 1 && ay <= 6) ? L["Spring"].Value : L["Fall"].Value;
+                                        @($"{donem} {yil}")
+                                    }
+                                    else { @("—") }
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel: Form -->
+        <div class="col-md-8">
+            <form asp-action="Index" asp-controller="Profile" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- İletişim Bilgileri -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h6 class="fw-bold mb-0" style="color:#cc0000;">@L["ContactInfo"]</h6>
+                        <small class="text-muted">@L["ContactInfoSub"]</small>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label">@L["Email"]</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="Email" class="form-control" readonly />
+                                }
+                                else
+                                {
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                }
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label">@L["Phone"]</label>
+                                <input asp-for="Phone" class="form-control" placeholder="05XX XXX XX XX" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kariyer Bilgileri (sadece mezun) -->
+                @if (!isAdmin)
+                {
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h6 class="fw-bold mb-0" style="color:#cc0000;">@L["CareerInfo"]</h6>
+                            <small class="text-muted">@L["ContactInfoSub"]</small>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row g-3">
+
+                                <!-- Çalışma Durumu + Başlangıç Yılı -->
+                                <div class="col-md-6">
+                                    <label asp-for="EmploymentStatus" class="form-label">@L["EmploymentStatus"]</label>
+                                    <select asp-for="EmploymentStatus" class="form-select">
+                                        <option value="">@L["SelectOption"]</option>
+                                        <option value="employed">@L["Working"]</option>
+                                        <option value="job_seeking">@L["JobSeeking"]</option>
+                                        <option value="academic">@L["Academic"]</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="StartYear" class="form-label">@L["StartYear"]</label>
+                                    <input asp-for="StartYear" class="form-control" placeholder="2023" type="text" />
+                                    <span asp-validation-for="StartYear" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Şirket Adı -->
+                                <div class="col-12">
+                                    <label asp-for="CompanyName" class="form-label">@L["CompanyName"]</label>
+                                    <input asp-for="CompanyName" class="form-control" />
+                                </div>
+
+                                <!-- SEKTÖR (Cascading: 1. adım) -->
+                                <div class="col-12">
+                                    <label class="form-label">@L["Sector"]</label>
+                                    <select id="sectorSelect" name="Sector" class="form-select">
+                                        <option value="">— @L["SelectOption"] —</option>
+                                        @foreach (var s in sectors)
+                                        {
+                                            <option value="@s.Name"
+                                                    data-id="@s.Id"
+                                                    selected="@(Model.Sector == s.Name ? "selected" : null)">
+                                                @s.Name
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- MESLEK (Cascading: 2. adım) -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Meslek</label>
+                                    <select id="professionSelect" name="Profession" class="form-select">
+                                        <option value="">— Önce sektör seçin —</option>
+                                        @foreach (var p in professions)
+                                        {
+                                            <option value="@p.Name"
+                                                    data-id="@p.Id"
+                                                    selected="@(Model.Profession == p.Name ? "selected" : null)">
+                                                @p.Name
+                                            </option>
+                                        }
+                                    </select>
+                                    <small class="text-muted" id="professionHint"
+                                           style="@(professions.Count == 0 ? "" : "display:none")">
+                                        Sektör seçilince aktif olur.
+                                    </small>
+                                </div>
+
+                                <!-- POZİSYON (Cascading: 3. adım) -->
+                                <div class="col-md-6">
+                                    <label class="form-label">@L["Position"]</label>
+                                    <select id="positionSelect" name="Position" class="form-select">
+                                        <option value="">— Önce meslek seçin —</option>
+                                        @foreach (var p in positions)
+                                        {
+                                            <option value="@p.Name"
+                                                    selected="@(Model.Position == p.Name ? "selected" : null)">
+                                                @p.Name
+                                            </option>
+                                        }
+                                    </select>
+                                    <small class="text-muted" id="positionHint"
+                                           style="@(positions.Count == 0 ? "" : "display:none")">
+                                        Meslek seçilince aktif olur.
+                                    </small>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a asp-action="ChangePassword" class="btn btn-outline-secondary btn-sm" style="border-radius:8px;">
+                        <i class="bi bi-lock me-1"></i>@L["ChangePassword"]
+                    </a>
+                    <button type="submit" class="btn px-4 py-2 text-white fw-semibold"
+                            style="background-color:#cc0000; border-radius:10px;">
+                        @L["Save"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-circle { width:80px;height:80px;background:linear-gradient(135deg,#e60000,#cc0000);border-radius:50%;display:flex;align-items:center;justify-content:center; }
+    .avatar-initials { color:white;font-size:1.8rem;font-weight:700;text-transform:uppercase; }
+    .info-label { font-size:0.78rem;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;display:block; }
+    .info-value { font-size:0.95rem;color:#333;font-weight:500;margin:0; }
+    .form-control, .form-select { border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 14px;font-size:0.92rem; }
+    .form-control:focus, .form-select:focus { border-color:#cc0000;box-shadow:0 0 0 3px rgba(204,0,0,0.1); }
+    .form-control[readonly] { background-color:#f8f8f8;color:#888;cursor:not-allowed; }
+    .form-select:disabled { background-color:#f8f8f8;color:#aaa;cursor:not-allowed; }
+</style>
+
+@section Scripts {
+<script>
+    // ============================================================
+    // CASCADING DROPDOWN — Sektör → Meslek → Pozisyon
+    // ============================================================
+
+    const sectorSelect     = document.getElementById('sectorSelect');
+    const professionSelect = document.getElementById('professionSelect');
+    const positionSelect   = document.getElementById('positionSelect');
+    const professionHint   = document.getElementById('professionHint');
+    const positionHint     = document.getElementById('positionHint');
+
+    // Sektör değişince → Meslekleri yükle
+    sectorSelect?.addEventListener('change', async function () {
+        const selectedOpt = this.options[this.selectedIndex];
+        const sectorId    = selectedOpt.getAttribute('data-id');
+
+        // Meslek ve Pozisyon resetle
+        resetSelect(professionSelect, '— Önce sektör seçin —');
+        resetSelect(positionSelect,   '— Önce meslek seçin —');
+        showHint(professionHint, true);
+        showHint(positionHint, true);
+
+        if (!sectorId) return;
+
+        const professions = await fetchJson(`/Career/GetProfessions?sectorId=${sectorId}`);
+        populateSelect(professionSelect, professions, '— Meslek seçin —');
+        showHint(professionHint, professions.length === 0);
+    });
+
+    // Meslek değişince → Pozisyonları yükle
+    professionSelect?.addEventListener('change', async function () {
+        const selectedOpt  = this.options[this.selectedIndex];
+        const professionId = selectedOpt.getAttribute('data-id');
+
+        resetSelect(positionSelect, '— Önce meslek seçin —');
+        showHint(positionHint, true);
+
+        if (!professionId) return;
+
+        const positions = await fetchJson(`/Career/GetPositions?professionId=${professionId}`);
+        populateSelect(positionSelect, positions, '— Pozisyon seçin —');
+        showHint(positionHint, positions.length === 0);
+    });
+
+    // ============================================================
+    // SAYFA AÇILIŞINDA KAYITLI DEĞERLERİ ÖN-YÜKLE
+    // ============================================================
+    (async function initCascade() {
+        const savedSector     = '@Html.Raw(Model.Sector?.Replace("'", "\\'") ?? "")';
+        const savedProfession = '@Html.Raw(Model.Profession?.Replace("'", "\\'") ?? "")';
+        const savedPosition   = '@Html.Raw(Model.Position?.Replace("'", "\\'") ?? "")';
+
+        if (!savedSector) return;
+
+        // Sektör zaten seçili mi kontrol et
+        const sectorOpt = [...sectorSelect.options].find(o => o.value === savedSector);
+        if (!sectorOpt) return;
+
+        const sectorId = sectorOpt.getAttribute('data-id');
+        if (!sectorId) return;
+
+        // Meslekleri yükle
+        const professions = await fetchJson(`/Career/GetProfessions?sectorId=${sectorId}`);
+        populateSelect(professionSelect, professions, '— Meslek seçin —', savedProfession);
+        showHint(professionHint, professions.length === 0);
+
+        if (!savedProfession) return;
+
+        // Seçili mesleğin ID'sini bul
+        const profOpt = [...professionSelect.options].find(o => o.value === savedProfession);
+        if (!profOpt) return;
+
+        const professionId = profOpt.getAttribute('data-id');
+        if (!professionId) return;
+
+        // Pozisyonları yükle
+        const positions = await fetchJson(`/Career/GetPositions?professionId=${professionId}`);
+        populateSelect(positionSelect, positions, '— Pozisyon seçin —', savedPosition);
+        showHint(positionHint, positions.length === 0);
+    })();
+
+    // ============================================================
+    // YARDIMCI FONKSİYONLAR
+    // ============================================================
+
+    async function fetchJson(url) {
+        try {
+            const res = await fetch(url);
+            return await res.json();
+        } catch {
+            return [];
+        }
+    }
+
+    function populateSelect(selectEl, items, placeholder, preselect = '') {
+        selectEl.innerHTML = `<option value="">${placeholder}</option>`;
+        items.forEach(item => {
+            const opt     = document.createElement('option');
+            opt.value     = item.name;
+            opt.textContent = item.name;
+            opt.setAttribute('data-id', item.id);
+            if (preselect && item.name === preselect) opt.selected = true;
+            selectEl.appendChild(opt);
+        });
+    }
+
+    function resetSelect(selectEl, placeholder) {
+        selectEl.innerHTML = `<option value="">${placeholder}</option>`;
+    }
+
+    function showHint(hintEl, show) {
+        if (hintEl) hintEl.style.display = show ? '' : 'none';
+    }
+</script>
+}

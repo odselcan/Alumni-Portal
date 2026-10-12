@@ -1,0 +1,249 @@
+@using Alumni_Portal.Models
+@model List<Graduate>
+
+@{
+    ViewData["Title"] = L["GraduateList"];
+}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <form method="get" asp-action="Index" asp-controller="Admin">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold" style="color:#555;">@L["Search"]</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search" style="color:#cc0000;"></i>
+                        </span>
+                        <input type="text" name="search" value="@ViewBag.Search"
+                               class="form-control border-start-0"
+                               placeholder="@L["SearchPlaceholder"]" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold" style="color:#555;">@L["Faculty"]</label>
+                    <select name="faculty" class="form-select" id="facultyFilter">
+                        <option value="">@L["All"]</option>
+                        @foreach (var f in (List<string>)ViewBag.Faculties)
+                        {
+                            <option value="@f" selected="@(ViewBag.SelectedFaculty == f)">@f</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold" style="color:#555;">@L["Department"]</label>
+                    <select name="department" class="form-select" id="departmentFilter">
+                        <option value="">@L["All"]</option>
+                        @foreach (var d in (List<string>)ViewBag.Departments)
+                        {
+                            <option value="@d" selected="@(ViewBag.SelectedDepartment == d)">@d</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold" style="color:#555;">@L["GraduationYear"]</label>
+                    <select name="graduationYear" class="form-select">
+                        <option value="">@L["All"]</option>
+                        @foreach (var y in (List<int>)ViewBag.GraduationYears)
+                        {
+                            <option value="@y" selected="@(ViewBag.SelectedYear != null && ViewBag.SelectedYear == y)">@y</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold" style="color:#555;">@L["EmploymentStatus"]</label>
+                    <select name="employmentStatus" class="form-select">
+                        <option value="">@L["All"]</option>
+                        <option value="employed"    selected="@(ViewBag.SelectedStatus == "employed")">@L["Working"]</option>
+                        <option value="job_seeking" selected="@(ViewBag.SelectedStatus == "job_seeking")">@L["JobSeeking"]</option>
+                        <option value="academic"    selected="@(ViewBag.SelectedStatus == "academic")">@L["Academic"]</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn w-100 text-white fw-semibold"
+                            style="background:#cc0000;border-radius:8px;padding:10px;">
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <i class="bi bi-check-circle me-1"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <i class="bi bi-x-circle me-1"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="d-flex align-items-center justify-content-between p-4 pb-0">
+            <h6 style="font-weight:600;color:#1a1a2e;margin:0;">
+                <i class="bi bi-people-fill me-2" style="color:#cc0000;"></i>
+                @L["GraduateList"]
+                
+            </h6>
+            <div class="d-flex gap-2">
+                <a asp-controller="Admin" asp-action="SendBulkEmail"
+                   class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-envelope-fill me-1"></i> Toplu Mail
+                </a>
+                <a asp-controller="Admin" asp-action="ExportExcel" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Excel
+                </a>
+                <a asp-controller="Admin" asp-action="ExportPdf" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background:#fff5f5;">
+                    <tr>
+                        <th class="px-4 py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColGraduate"]</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColFacultyDepartment"]</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColGraduation"]</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColStatus"]</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColCompany"]</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColContact"]</th>
+                        <th class="py-3" style="font-size:0.82rem;color:#888;font-weight:600;border:none;">@L["ColAction"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5" style="color:#aaa;">
+                                <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
+                                <p class="mt-2 mb-0">@L["NoData"]</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var g in Model)
+                        {
+                            var initials = $"{g.FirstName?.Substring(0,1)}{g.LastName?.Substring(0,1)}".ToUpper();
+                            var status   = g.GraduateCareer?.EmploymentStatus;
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width:40px;height:40px;border-radius:50%;background:#ffe0e0;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:600;color:#cc0000;flex-shrink:0;">
+                                            @initials
+                                        </div>
+                                        <div>
+                                            <div style="font-weight:500;color:#1a1a2e;font-size:0.92rem;">@g.FirstName @g.LastName</div>
+                                            <div style="font-size:0.78rem;color:#888;">@g.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3">
+                                    <div style="font-size:0.88rem;color:#1a1a2e;">@(g.Faculty ?? "-")</div>
+                                    <div style="font-size:0.78rem;color:#888;">@(g.Department ?? "-")</div>
+                                </td>
+                                <td class="py-3">
+                                    @if (g.GraduationDate.HasValue)
+                                    {
+                                        var ay    = g.GraduationDate.Value.Month;
+                                        var yil   = g.GraduationDate.Value.Year;
+                                        var donem = (ay >= 1 && ay <= 6) ? L["Spring"].Value : L["Fall"].Value;
+                                        <span style="font-size:0.88rem;color:#555;">@donem @yil</span>
+                                    }
+                                    else { <span style="font-size:0.88rem;color:#aaa;">-</span> }
+                                </td>
+                                <td class="py-3">
+                                    @if (status == "employed")
+                                    {
+                                        <span class="badge" style="background:#e6f9f0;color:#16a34a;font-size:0.78rem;padding:6px 10px;border-radius:6px;">
+                                            <i class="bi bi-briefcase-fill me-1"></i>@L["Working"]
+                                        </span>
+                                    }
+                                    else if (status == "job_seeking")
+                                    {
+                                        <span class="badge" style="background:#fff7e6;color:#d97706;font-size:0.78rem;padding:6px 10px;border-radius:6px;">
+                                            <i class="bi bi-search me-1"></i>@L["JobSeeking"]
+                                        </span>
+                                    }
+                                    else if (status == "academic")
+                                    {
+                                        <span class="badge" style="background:#e6f0ff;color:#2563eb;font-size:0.78rem;padding:6px 10px;border-radius:6px;">
+                                            <i class="bi bi-book-fill me-1"></i>@L["Academic"]
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background:#f5f5f5;color:#aaa;font-size:0.78rem;padding:6px 10px;border-radius:6px;">
+                                            @L["Unspecified"]
+                                        </span>
+                                    }
+                                </td>
+                                <td class="py-3">
+                                    <div style="font-size:0.88rem;color:#1a1a2e;">@(g.GraduateCareer?.CompanyName ?? "-")</div>
+                                    <div style="font-size:0.78rem;color:#888;">@(g.GraduateCareer?.Position ?? "-")</div>
+                                </td>
+                                <td class="py-3">
+                                    <div style="font-size:0.82rem;color:#555;">@(g.Phone ?? "-")</div>
+                                </td>
+                                <td class="py-3">
+                                    <div class="d-flex gap-1">
+                                        <a asp-action="SendEmail" asp-controller="Admin"
+                                           asp-route-id="@g.GraduateId"
+                                           class="btn btn-sm btn-outline-primary" title="Mail Gönder">
+                                            <i class="bi bi-envelope"></i>
+                                        </a>
+                                        <form method="post" asp-action="Delete" asp-controller="Admin"
+                                              asp-route-id="@g.GraduateId"
+                                              onsubmit="return confirm('@L["DeleteConfirm"]')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="@L["Delete"]">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        const facultyFilter    = document.getElementById('facultyFilter');
+        const departmentFilter = document.getElementById('departmentFilter');
+        const selectedDept     = "@ViewBag.SelectedDepartment";
+
+        async function loadDepartments(faculty) {
+            departmentFilter.innerHTML = '<option value="">@L["All"]</option>';
+            departmentFilter.disabled = !faculty;
+            if (!faculty) return;
+
+            const res  = await fetch(`/Admin/GetDepartments?faculty=${encodeURIComponent(faculty)}`);
+            const data = await res.json();
+            data.forEach(d => {
+                const opt       = document.createElement('option');
+                opt.value       = d;
+                opt.textContent = d;
+                if (d === selectedDept) opt.selected = true;
+                departmentFilter.appendChild(opt);
+            });
+        }
+
+        facultyFilter.addEventListener('change', () => loadDepartments(facultyFilter.value));
+
+        if (facultyFilter.value) loadDepartments(facultyFilter.value);
+        else departmentFilter.disabled = true;
+    </script>
+</div>

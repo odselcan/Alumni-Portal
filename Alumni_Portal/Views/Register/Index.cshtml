@@ -1,0 +1,205 @@
+@model Alumni_Portal.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = L["RegisterTitle"];
+    Layout = null;
+
+    var faculties = ViewBag.Faculties as List<Alumni_Portal.Models.Faculty>
+                    ?? new List<Alumni_Portal.Models.Faculty>();
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alumni Portal - @L["RegisterTitle"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #eef0f5;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; font-family: 'Segoe UI', sans-serif; padding: 32px 0;
+        }
+        .register-wrapper {
+            display: flex; width: 860px; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12); background: white;
+        }
+        .register-form-side {
+            flex: 1; padding: 48px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .register-form-side .brand { color: #cc0000; font-size: 0.95rem; font-weight: 600; margin-bottom: 20px; }
+        .register-form-side h2 { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+        .register-form-side .subtitle { color: #888; font-size: 0.92rem; margin-bottom: 28px; }
+        .form-label { font-size: 0.85rem; color: #555; margin-bottom: 6px; }
+        .form-control, .form-select {
+            border: 1.5px solid #e0e0e0; border-radius: 10px;
+            padding: 11px 16px; font-size: 0.95rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #cc0000; box-shadow: 0 0 0 3px rgba(204,0,0,0.1);
+        }
+        .btn-register {
+            background: #cc0000; color: white; border: none; border-radius: 10px;
+            padding: 13px; font-size: 1rem; font-weight: 600; width: 100%; margin-top: 8px;
+        }
+        .btn-register:hover { background: #aa0000; }
+        .register-banner-side {
+            width: 300px;
+            background: linear-gradient(135deg, #e60000 0%, #cc0000 50%, #990000 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 48px 32px; border-radius: 0 16px 16px 0;
+        }
+        .register-banner-side h3 { color: white; font-size: 1.6rem; font-weight: 700; line-height: 1.4; }
+        .text-danger { font-size: 0.82rem; }
+        .lang-selector { position: fixed; top: 20px; right: 24px; }
+        .lang-btn {
+            background: none; border: 1.5px solid #e0e0e0; border-radius: 8px;
+            padding: 5px 10px; font-size: 0.82rem; cursor: pointer; color: #444;
+        }
+        .lang-btn:hover { border-color: #cc0000; color: #cc0000; }
+        a { color: #cc0000; }
+        a:hover { color: #aa0000; }
+    </style>
+</head>
+<body>
+    <div class="lang-selector">
+        <div class="dropdown">
+            @{
+                var currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+                var flag = currentCulture switch { "en-US" => "🇬🇧", "de-DE" => "🇩🇪", _ => "🇹🇷" };
+            }
+            <button class="lang-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">@flag</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/Language/Change?culture=tr-TR&returnUrl=/Register/Index">🇹🇷 Türkçe</a></li>
+                <li><a class="dropdown-item" href="/Language/Change?culture=en-US&returnUrl=/Register/Index">🇬🇧 English</a></li>
+                <li><a class="dropdown-item" href="/Language/Change?culture=de-DE&returnUrl=/Register/Index">🇩🇪 Deutsch</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="register-wrapper">
+        <div class="register-form-side">
+            <div class="brand">@L["GraduateManagementSystem"]</div>
+            <h2>@L["RegisterTitle"]</h2>
+            <p class="subtitle">@L["RegisterSubtitle"]</p>
+
+            <form asp-action="Index" asp-controller="Register" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label asp-for="FirstName" class="form-label">@L["FirstName"]</label>
+                        <input asp-for="FirstName" class="form-control" placeholder="@L["FirstNamePlaceholder"]" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="LastName" class="form-label">@L["LastName"]</label>
+                        <input asp-for="LastName" class="form-control" placeholder="@L["LastNamePlaceholder"]" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Email" class="form-label">@L["Email"]</label>
+                        <input asp-for="Email" class="form-control" placeholder="ornek@universite.edu.tr" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Password" class="form-label">@L["Password"]</label>
+                        <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmPasswordLabel"]</label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••••" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Faculty" class="form-label">@L["Faculty"]</label>
+                        <select asp-for="Faculty" class="form-select" id="facultySelect">
+                            <option value="">@L["SelectFaculty"]</option>
+                            @foreach (var f in faculties)
+                            {
+                                <option value="@Html.Raw(f.Name)" ...>@f.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Faculty" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Department" class="form-label">@L["Department"]</label>
+                        <select asp-for="Department" class="form-select" id="departmentSelect">
+                            <option value="">@L["SelectDepartment"]</option>
+                            @if (!string.IsNullOrEmpty(Model.Department))
+                            {
+                                <option value="@Model.Department" selected>@Model.Department</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Department" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="GraduationYear" class="form-label">@L["GraduationYear"]</label>
+                        <select asp-for="GraduationYear" class="form-select">
+                            <option value="">@L["SelectYear"]</option>
+                            @for (int y = DateTime.Now.Year; y >= 1990; y--)
+                            {
+                                <option value="@y" selected="@(Model.GraduationYear == y)">@y</option>
+                            }
+                        </select>
+                        <span asp-validation-for="GraduationYear" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="GraduationSemester" class="form-label">@L["GraduationSemester"]</label>
+                        <select asp-for="GraduationSemester" class="form-select">
+                            <option value="">@L["SelectSemester"]</option>
+                            <option value="bahar" selected="@(Model.GraduationSemester == "bahar")">@L["Spring"]</option>
+                            <option value="guz" selected="@(Model.GraduationSemester == "guz")">@L["Fall"]</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="BirthDate" class="form-label">@L["BirthDate"]</label>
+                        <input asp-for="BirthDate" class="form-control" type="date" />
+                    </div>
+                </div>
+                <button type="submit" class="btn-register mt-3">@L["RegisterTitle"]</button>
+                <div class="text-center mt-3">
+                    <a asp-controller="Login" asp-action="Index" class="text-decoration-none small">@L["AlreadyHaveAccount"]</a>
+                </div>
+            </form>
+        </div>
+        <div class="register-banner-side">
+            <h3>@L["RegisterBanner"]</h3>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const facultyDepartments = {
+    @foreach (var f in faculties)
+    {
+        @:  "@Html.Raw(f.Name)": [@Html.Raw(string.Join(",", f.Departments.Select(d => $"\"{d.Name}\"")))],
+    }
+};
+
+        const facultySelect    = document.getElementById('facultySelect');
+        const departmentSelect = document.getElementById('departmentSelect');
+        const selectedDept     = "@Model.Department";
+        const selectDeptText   = "@L["SelectDepartmentOnly"]";
+
+        function updateDepartments(selectedFaculty) {
+            departmentSelect.innerHTML = `<option value="">${selectDeptText}</option>`;
+            if (selectedFaculty && facultyDepartments[selectedFaculty]) {
+                facultyDepartments[selectedFaculty].forEach(dept => {
+                    const opt = document.createElement('option');
+                    opt.value = dept; opt.textContent = dept;
+                    if (dept === selectedDept) opt.selected = true;
+                    departmentSelect.appendChild(opt);
+                });
+            }
+        }
+
+        facultySelect.addEventListener('change', () => updateDepartments(facultySelect.value));
+        if (facultySelect.value) updateDepartments(facultySelect.value);
+    </script>
+</body>
+</html>

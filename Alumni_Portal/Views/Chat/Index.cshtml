@@ -1,0 +1,175 @@
+@{
+    ViewData["Title"] = L["Messages"];
+    var myId         = (int)ViewBag.MyId;
+    var graduates    = (List<Alumni_Portal.Models.UserAccount>)ViewBag.Graduates;
+    var selectedUser = ViewBag.SelectedUser as Alumni_Portal.Models.UserAccount;
+    var messages     = (List<Alumni_Portal.Models.Message>)ViewBag.Messages;
+    var unreadCounts = (Dictionary<int, int>)ViewBag.UnreadCounts;
+}
+
+<div style="display:flex;gap:0;height:calc(100vh - 120px);background:white;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,0.08);overflow:hidden;">
+
+    <!-- Sol: Kişi Listesi -->
+    <div style="width:300px;border-right:1px solid #f0f0f0;display:flex;flex-direction:column;">
+        <div style="padding:20px 16px 12px;border-bottom:1px solid #f0f0f0;">
+            <h6 style="font-weight:700;color:#1a1a2e;margin:0;">
+                <i class="bi bi-chat-dots-fill me-2" style="color:#cc0000;"></i>@L["Messages"]
+            </h6>
+        </div>
+        <div style="overflow-y:auto;flex:1;">
+            @foreach (var g in graduates)
+            {
+                var isSelected  = selectedUser?.Id == g.Id;
+                var initials    = $"{g.FirstName?.Substring(0,1)}{g.LastName?.Substring(0,1)}".ToUpper();
+                var unread      = unreadCounts.ContainsKey(g.Id) ? unreadCounts[g.Id] : 0;
+                var photoUrl    = g.ProfileImageUrl;
+                var roleLabel   = g.UserType == "graduate" ? L["Graduate"].Value : L["Admin"].Value;
+
+                <a href="/Chat/Index?userId=@g.Id"
+                   style="display:flex;align-items:center;gap:12px;padding:14px 16px;
+                          text-decoration:none;border-left:3px solid @(isSelected ? "#cc0000" : "transparent");
+                          background:@(isSelected ? "#fff0f0" : "white");
+                          transition:background 0.15s;">
+                    @if (!string.IsNullOrEmpty(photoUrl))
+                    {
+                        <img src="@photoUrl" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div style="width:42px;height:42px;border-radius:50%;background:#ffe0e0;
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-weight:600;color:#cc0000;font-size:0.88rem;flex-shrink:0;">
+                            @initials
+                        </div>
+                    }
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:0.9rem;font-weight:500;color:#1a1a2e;">@g.FirstName @g.LastName</div>
+                        <div style="font-size:0.75rem;color:#aaa;">@roleLabel</div>
+                    </div>
+                    @if (unread > 0)
+                    {
+                        <span style="background:#cc0000;color:white;border-radius:50%;
+                                     width:20px;height:20px;display:flex;align-items:center;
+                                     justify-content:center;font-size:0.72rem;font-weight:600;">
+                            @unread
+                        </span>
+                    }
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Sağ: Mesaj Alanı -->
+    <div style="flex:1;display:flex;flex-direction:column;">
+        @if (selectedUser == null)
+        {
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#ccc;">
+                <i class="bi bi-chat-dots" style="font-size:3rem;"></i>
+                <p class="mt-3">@L["NoConversation"]</p>
+            </div>
+        }
+        else
+        {
+            <!-- Header -->
+            <div style="padding:16px 24px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:12px;">
+                @if (!string.IsNullOrEmpty(selectedUser.ProfileImageUrl))
+                {
+                    <img src="@selectedUser.ProfileImageUrl"
+                         style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
+                }
+                else
+                {
+                    var ini = $"{selectedUser.FirstName?.Substring(0,1)}{selectedUser.LastName?.Substring(0,1)}".ToUpper();
+                    <div style="width:40px;height:40px;border-radius:50%;background:#ffe0e0;
+                                display:flex;align-items:center;justify-content:center;
+                                font-weight:600;color:#cc0000;">@ini</div>
+                }
+                <div>
+                    <div style="font-weight:600;color:#1a1a2e;">@selectedUser.FirstName @selectedUser.LastName</div>
+                    <div style="font-size:0.78rem;color:#aaa;">
+                        @(selectedUser.UserType == "graduate" ? L["Graduate"].Value : L["Admin"].Value)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mesajlar -->
+            <div id="messageBox" style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+                @foreach (var m in messages)
+                {
+                    var isMine = m.SenderId == myId;
+                    <div style="display:flex;justify-content:@(isMine ? "flex-end" : "flex-start");">
+                        <div style="max-width:60%;padding:10px 14px;border-radius:@(isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px");
+                                    background:@(isMine ? "#cc0000" : "#fff0f0");
+                                    color:@(isMine ? "white" : "#1a1a2e");font-size:0.92rem;">
+                            <div>@m.Content</div>
+                            <div style="font-size:0.72rem;opacity:0.7;margin-top:4px;text-align:right;">
+                                @m.SentAt.ToLocalTime().ToString("HH:mm")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Mesaj Gönder -->
+            <div style="padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;gap:12px;">
+                <input id="messageInput" type="text" placeholder="@L["MessagePlaceholder"]"
+                       style="flex:1;border:1.5px solid #e0e0e0;border-radius:24px;
+                              padding:12px 20px;font-size:0.92rem;outline:none;"
+                       onkeydown="if(event.key==='Enter') sendMessage()" />
+                <button onclick="sendMessage()"
+                        style="background:#cc0000;color:white;border:none;border-radius:50%;
+                               width:48px;height:48px;display:flex;align-items:center;
+                               justify-content:center;cursor:pointer;font-size:1.1rem;">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    const myId           = @myId;
+    const selectedUserId = @(selectedUser?.Id.ToString() ?? "null");
+    const messageBox     = document.getElementById('messageBox');
+
+    if (messageBox) messageBox.scrollTop = messageBox.scrollHeight;
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.on("ReceiveMessage", (msg) => {
+        if (!messageBox) return;
+        if (msg.senderId !== selectedUserId && msg.senderId !== myId) return;
+
+        const isMine = msg.senderId === myId;
+        const div    = document.createElement('div');
+        div.style.cssText = `display:flex;justify-content:${isMine ? 'flex-end' : 'flex-start'};`;
+        div.innerHTML = `
+            <div style="max-width:60%;padding:10px 14px;
+                        border-radius:${isMine ? '16px 16px 4px 16px' : '16px 16px 16px 4px'};
+                        background:${isMine ? '#cc0000' : '#fff0f0'};
+                        color:${isMine ? 'white' : '#1a1a2e'};font-size:0.92rem;">
+                <div>${msg.content}</div>
+                <div style="font-size:0.72rem;opacity:0.7;margin-top:4px;text-align:right;">${msg.sentAt}</div>
+            </div>`;
+        messageBox.appendChild(div);
+        messageBox.scrollTop = messageBox.scrollHeight;
+    });
+
+    connection.start().catch(err => console.error(err));
+
+    function sendMessage() {
+        const input   = document.getElementById('messageInput');
+        const content = input.value.trim();
+        if (!content || !selectedUserId) return;
+
+        connection.invoke("SendMessage", selectedUserId, content)
+            .catch(err => console.error(err));
+        input.value = '';
+    }
+</script>
+}

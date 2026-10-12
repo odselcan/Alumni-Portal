@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter</value></resheader>
+
+  <data name="Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Profile" xml:space="preserve"><value>My Profile</value></data>
+  <data name="Messages" xml:space="preserve"><value>Messages</value></data>
+  <data name="Announcements" xml:space="preserve"><value>Announcements</value></data>
+  <data name="GraduateList" xml:space="preserve"><value>Graduate List</value></data>
+  <data name="PendingApprovals" xml:space="preserve"><value>Pending Approvals</value></data>
+  <data name="Statistics" xml:space="preserve"><value>Statistics</value></data>
+  <data name="AddAdmin" xml:space="preserve"><value>Add Admin</value></data>
+  <data name="Logout" xml:space="preserve"><value>Logout</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Faculty" xml:space="preserve"><value>Faculty</value></data>
+  <data name="Department" xml:space="preserve"><value>Department</value></data>
+  <data name="GraduationYear" xml:space="preserve"><value>Graduation Year</value></data>
+  <data name="EmploymentStatus" xml:space="preserve"><value>Employment Status</value></data>
+  <data name="All" xml:space="preserve"><value>All</value></data>
+  <data name="Working" xml:space="preserve"><value>Employed</value></data>
+  <data name="JobSeeking" xml:space="preserve"><value>Job Seeking</value></data>
+  <data name="Academic" xml:space="preserve"><value>Academic</value></data>
+  <data name="Unspecified" xml:space="preserve"><value>Unspecified</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="ChangePassword" xml:space="preserve"><value>Change Password</value></data>
+  <data name="Login" xml:space="preserve"><value>Login</value></data>
+  <data name="Register" xml:space="preserve"><value>Register</value></data>
+  <data name="ForgotPassword" xml:space="preserve"><value>Forgot Password</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Welcome</value></data>
+  <data name="NoAnnouncements" xml:space="preserve"><value>No announcements yet.</value></data>
+<data name="TodaysBirthdays" xml:space="preserve"><value>Today's Birthdays</value></data>
+<data name="NoBirthdays" xml:space="preserve"><value>No birthdays today.</value></data>
+</root>

@@ -1,0 +1,25 @@
+
+
+# ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Hassas yapılandırma dosyaları
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
+# Şablon dosyası repoya eklenecek
+# appsettings.example.json → bunu ekle, gerçek bilgileri silip
+
+# Profil fotoğrafları (büyük dosyalar)
+wwwroot/uploads/
+
+# Geçici dosyalar
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

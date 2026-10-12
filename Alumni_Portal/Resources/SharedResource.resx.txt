@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter</value></resheader>
+  <data name="ANA_SAYFA_TEST" xml:space="preserve"><value>TURKCE_TEST</value></data>
+  <data name="Profile" xml:space="preserve"><value>Profilim</value></data>
+  <data name="Messages" xml:space="preserve"><value>Mesajlar</value></data>
+  <data name="Announcements" xml:space="preserve"><value>Duyurular</value></data>
+  <data name="GraduateList" xml:space="preserve"><value>Mezun Listesi</value></data>
+  <data name="PendingApprovals" xml:space="preserve"><value>Onay Bekleyenler</value></data>
+  <data name="Statistics" xml:space="preserve"><value>Istatistikler</value></data>
+  <data name="AddAdmin" xml:space="preserve"><value>Admin Ekle</value></data>
+  <data name="Logout" xml:space="preserve"><value>Cikis Yap</value></data>
+  <data name="Save" xml:space="preserve"><value>Kaydet</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Iptal</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrele</value></data>
+  <data name="Search" xml:space="preserve"><value>Ara</value></data>
+  <data name="Faculty" xml:space="preserve"><value>Fakulte</value></data>
+  <data name="Department" xml:space="preserve"><value>Bolum</value></data>
+  <data name="GraduationYear" xml:space="preserve"><value>Mezuniyet Yili</value></data>
+  <data name="EmploymentStatus" xml:space="preserve"><value>Calisma Durumu</value></data>
+  <data name="All" xml:space="preserve"><value>Tumu</value></data>
+  <data name="Working" xml:space="preserve"><value>Calisiyor</value></data>
+  <data name="JobSeeking" xml:space="preserve"><value>Is Ariyor</value></data>
+  <data name="Academic" xml:space="preserve"><value>Akademik</value></data>
+  <data name="Unspecified" xml:space="preserve"><value>Belirtilmemis</value></data>
+  <data name="Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="ChangePassword" xml:space="preserve"><value>Sifre Degistir</value></data>
+  <data name="Login" xml:space="preserve"><value>Giris Yap</value></data>
+  <data name="Register" xml:space="preserve"><value>Kayit Ol</value></data>
+  <data name="ForgotPassword" xml:space="preserve"><value>Sifremi Unuttum</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Hos Geldiniz</value></data>
+  <data name="NoAnnouncements" xml:space="preserve"><value>Henuz duyuru bulunmuyor.</value></data>
+  <data name="TodaysBirthdays" xml:space="preserve"><value>Bugunun Dogum Gunleri</value></data>
+  <data name="NoBirthdays" xml:space="preserve"><value>Bugun dogum gunu yok.</value></data>
+</root>

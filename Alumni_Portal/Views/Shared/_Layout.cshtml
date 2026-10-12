@@ -1,0 +1,162 @@
+﻿
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Alumni Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 250px; min-height: 100vh;
+            background: linear-gradient(180deg, #cc0000 0%, #8b0000 100%);
+            display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; z-index: 100; padding-bottom: 0;
+        }
+        .sidebar-brand { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.15); text-align: center; }
+
+        .sidebar-brand h5 { color: white; font-size: 1.05rem; font-weight: 700; margin: 0; }
+        .sidebar-brand p { color: rgba(255,255,255,0.65); font-size: 0.78rem; margin: 4px 0 0; }
+        .sidebar-nav { padding: 12px 0; flex: 1; }
+        .sidebar-nav a {
+            display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+            color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.92rem;
+            transition: all 0.2s; border-left: 3px solid transparent;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: rgba(255,255,255,0.15); color: white; border-left-color: white;
+        }
+        .sidebar-nav a i { font-size: 1.1rem; width: 22px; }
+        .sidebar-section {
+            padding: 8px 24px 4px; font-size: 0.7rem; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 0.8px; margin-top: 8px;
+        }
+        .sidebar-footer { padding: 20px 24px; border-top: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.1); }
+        .btn-logout {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3);
+            border-radius: 8px; padding: 10px; font-size: 0.88rem; color: white;
+            cursor: pointer; transition: all 0.2s; font-weight: 500;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.25); border-color: white; }
+        .main-wrapper { margin-left: 250px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+        .top-navbar {
+            background: white; padding: 14px 32px; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            position: sticky; top: 0; z-index: 99; border-bottom: 2px solid #cc0000;
+        }
+        .top-navbar .page-title { font-size: 1.15rem; font-weight: 600; color: #1a1a2e; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width:38px;height:38px;border-radius:50%;background:#cc0000;color:white;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:600; }
+        .avatar-photo { width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #cc0000; }
+        .user-info span { font-size: 0.92rem; color: #444; font-weight: 500; }
+        .page-content { padding: 28px 32px; flex: 1; }
+        .lang-btn { background:none;border:1.5px solid #e0e0e0;border-radius:8px;padding:5px 10px;font-size:0.82rem;cursor:pointer;color:#444;transition:all 0.2s; }
+        .lang-btn:hover { border-color: #cc0000; color: #cc0000; }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h5><i class="bi bi-mortarboard-fill me-2"></i>Antalya Belek Üniversitesi</h5>
+            <p>@L["GraduateManagementSystem"]</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a asp-controller="Home" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                <i class="bi bi-house-door"></i> @L["Home"]
+            </a>
+            <a asp-controller="Profile" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")">
+                <i class="bi bi-person-circle"></i> @L["Profile"]
+            </a>
+            <a asp-controller="Chat" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Chat" ? "active" : "")">
+                <i class="bi bi-chat-dots"></i> @L["Messages"]
+            </a>
+
+            @if (User.IsInRole("admin"))
+            {
+                <div class="sidebar-section">@L["Management"]</div>
+                <a asp-controller="Admin" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                    <i class="bi bi-people"></i> @L["GraduateList"]
+                </a>
+                <a asp-controller="Admin" asp-action="PendingApprovals"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "PendingApprovals" ? "active" : "")">
+                    <i class="bi bi-hourglass-split"></i> @L["PendingApprovals"]
+                </a>
+                <a asp-controller="Admin" asp-action="Statistics"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Statistics" ? "active" : "")">
+                    <i class="bi bi-bar-chart-line"></i> @L["Statistics"]
+                </a>
+                <a asp-controller="Admin" asp-action="CreateAdmin"
+                   class="@(ViewContext.RouteData.Values["action"]?.ToString() == "CreateAdmin" ? "active" : "")">
+                    <i class="bi bi-shield-plus"></i> @L["AddAdmin"]
+                </a>
+                <a asp-controller="Announcement" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Announcement" ? "active" : "")">
+                    <i class="bi bi-megaphone"></i> @L["Announcements"]
+                </a>
+            }
+        </nav>
+        <div class="sidebar-footer">
+            <form asp-controller="Login" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-logout">
+                    <i class="bi bi-box-arrow-left"></i> @L["Logout"]
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="top-navbar">
+            <span class="page-title">@ViewData["Title"]</span>
+            <div class="user-info">
+                @{
+                    var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                    string? photoUrl = null;
+                    if (userIdStr != null)
+                    {
+                        var dbContext = Context.RequestServices.GetService<Alumni_Portal.Data.AppDbContext>();
+                        var dbUser = dbContext?.UserAccounts.Find(int.Parse(userIdStr));
+                        photoUrl = dbUser?.ProfileImageUrl;
+                    }
+                    var currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+                    var flag = currentCulture switch { "en-US" => "🇬🇧", "de-DE" => "🇩🇪", _ => "🇹🇷" };
+                }
+
+                <div class="dropdown">
+                    <button class="lang-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">@flag</button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/Language/Change?culture=tr-TR&returnUrl=@Context.Request.Path">🇹🇷 Türkçe</a></li>
+                        <li><a class="dropdown-item" href="/Language/Change?culture=en-US&returnUrl=@Context.Request.Path">🇬🇧 English</a></li>
+                        <li><a class="dropdown-item" href="/Language/Change?culture=de-DE&returnUrl=@Context.Request.Path">🇩🇪 Deutsch</a></li>
+                    </ul>
+                </div>
+
+                @if (!string.IsNullOrEmpty(photoUrl))
+                {
+                    <img src="@photoUrl" alt="Profil" class="avatar-photo" />
+                }
+                else
+                {
+                    <div class="avatar">@(User.Identity!.Name?.Substring(0, 1).ToUpper() ?? "U")</div>
+                }
+                <span>@User.Identity!.Name</span>
+            </div>
+        </div>
+        <div class="page-content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

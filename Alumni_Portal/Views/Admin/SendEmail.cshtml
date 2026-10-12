@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = ViewBag.IsBulk ? "Toplu Mail Gönder" : "Mail Gönder";
+    bool isBulk = ViewBag.IsBulk == true;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                <i class="bi bi-x-circle me-1"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div style="width:44px;height:44px;border-radius:50%;background:#ffe0e0;display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-envelope-fill" style="color:#cc0000;font-size:1.2rem;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0" style="font-weight:600;color:#1a1a2e;">
+                            @(isBulk ? "Tüm Mezunlara Mail Gönder" : "Mezuna Mail Gönder")
+                        </h5>
+                        @if (!isBulk)
+                        {
+                            <small style="color:#888;">
+                                <i class="bi bi-person me-1"></i>@ViewBag.GraduateName
+                                &nbsp;·&nbsp;
+                                <i class="bi bi-envelope me-1"></i>@ViewBag.GraduateEmail
+                            </small>
+                        }
+                        else
+                        {
+                            <small style="color:#888;">Aktif tüm mezunlara gönderilecek</small>
+                        }
+                    </div>
+                </div>
+
+                <form method="post"
+                      asp-action="@(isBulk ? "SendBulkEmail" : "SendEmail")"
+                      asp-controller="Admin"
+                      asp-route-id="@(isBulk ? null : (int?)ViewBag.GraduateId)">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="color:#555;">Konu</label>
+                        <input type="text" name="subject" class="form-control"
+                               placeholder="Mail konusu" required
+                               style="border-radius:8px;" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" style="color:#555;">İçerik</label>
+                        <textarea name="body" class="form-control" rows="10"
+                                  placeholder="Mail içeriğini buraya yazın..." required
+                                  style="border-radius:8px;"></textarea>
+                        <small class="text-muted">HTML kullanabilirsiniz (örn. &lt;b&gt;kalın&lt;/b&gt;, &lt;br&gt; satır sonu)</small>
+                    </div>
+
+                    @if (isBulk)
+                    {
+                        <div class="alert alert-warning py-2 mb-3" style="font-size:0.88rem;">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            Bu mail <strong>tüm aktif mezunlara</strong> gönderilecek. Emin misiniz?
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white fw-semibold px-4"
+                                style="background:#cc0000;border-radius:8px;"
+                                @(isBulk ? "onclick=\"return confirm('Tüm mezunlara mail gönderilecek. Onaylıyor musunuz?')\"" : "")>
+                            <i class="bi bi-send me-2"></i>@(isBulk ? "Toplu Gönder" : "Gönder")
+                        </button>
+                        <a asp-action="Index" asp-controller="Admin"
+                           class="btn btn-outline-secondary fw-semibold px-4"
+                           style="border-radius:8px;">
+                            <i class="bi bi-arrow-left me-1"></i>Geri
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

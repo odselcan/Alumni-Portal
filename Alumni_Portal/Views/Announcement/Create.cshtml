@@ -1,0 +1,52 @@
+@model Alumni_Portal.ViewModels.AnnouncementViewModel
+
+@{
+    ViewData["Title"] = L["NewAnnouncement"];
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h6 style="font-weight:600;color:#1a1a2e;margin-bottom:24px;">
+                    <i class="bi bi-megaphone-fill me-2" style="color:#cc0000;"></i>@L["NewAnnouncement"]
+                </h6>
+
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold" style="font-size:0.88rem;color:#555;">@L["AnnouncementTitle"]</label>
+                        <input asp-for="Title" class="form-control" placeholder="@L["AnnouncementTitle"]..." />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Content" class="form-label fw-semibold" style="font-size:0.88rem;color:#555;">@L["AnnouncementContent"]</label>
+                        <textarea asp-for="Content" class="form-control" rows="6" placeholder="@L["AnnouncementContent"]..."></textarea>
+                        <span asp-validation-for="Content" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4 form-check">
+                        <input asp-for="IsActive" class="form-check-input" style="border-color:#cc0000;" />
+                        <label asp-for="IsActive" class="form-check-label" style="font-size:0.88rem;">@L["Active"]</label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white fw-semibold"
+                                style="background:#cc0000;border-radius:8px;padding:10px 24px;">
+                            <i class="bi bi-check-lg me-1"></i> @L["Save"]
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary" style="border-radius:8px;padding:10px 24px;">
+                            @L["Cancel"]
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control { border:1.5px solid #e0e0e0;border-radius:10px;padding:10px 14px;font-size:0.92rem; }
+    .form-control:focus { border-color:#cc0000;box-shadow:0 0 0 3px rgba(204,0,0,0.1); }
+    .form-check-input:checked { background-color:#cc0000;border-color:#cc0000; }
+</style>

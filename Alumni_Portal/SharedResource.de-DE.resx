@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter</value></resheader>
+
+  <!-- NAVİGASYON -->
+  <data name="Home" xml:space="preserve"><value>Startseite</value></data>
+  <data name="Profile" xml:space="preserve"><value>Mein Profil</value></data>
+  <data name="Messages" xml:space="preserve"><value>Nachrichten</value></data>
+  <data name="Announcements" xml:space="preserve"><value>Ankündigungen</value></data>
+  <data name="GraduateList" xml:space="preserve"><value>Absolventenliste</value></data>
+  <data name="PendingApprovals" xml:space="preserve"><value>Ausstehende Genehmigungen</value></data>
+  <data name="Statistics" xml:space="preserve"><value>Statistiken</value></data>
+  <data name="AddAdmin" xml:space="preserve"><value>Admin Hinzufügen</value></data>
+  <data name="Logout" xml:space="preserve"><value>Abmelden</value></data>
+  <data name="Management" xml:space="preserve"><value>Verwaltung</value></data>
+  <data name="GraduateManagementSystem" xml:space="preserve"><value>Absolventenverwaltungssystem</value></data>
+  <data name="AntalyaBelekUniversity" xml:space="preserve"><value>Universität Antalya Belek</value></data>
+
+  <!-- GENEL -->
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtern</value></data>
+  <data name="Search" xml:space="preserve"><value>Suchen</value></data>
+  <data name="All" xml:space="preserve"><value>Alle</value></data>
+  <data name="SelectOption" xml:space="preserve"><value>Auswählen</value></data>
+  <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="Detail" xml:space="preserve"><value>Detail</value></data>
+  <data name="Action" xml:space="preserve"><value>Aktion</value></data>
+  <data name="Person" xml:space="preserve"><value>Personen</value></data>
+  <data name="NoData" xml:space="preserve"><value>Keine Einträge gefunden.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Name, Nachname oder E-Mail...</value></data>
+  <data name="RegistrationDate" xml:space="preserve"><value>Registrierungsdatum</value></data>
+
+  <!-- KİŞİ BİLGİLERİ -->
+  <data name="FirstName" xml:space="preserve"><value>Vorname</value></data>
+  <data name="LastName" xml:space="preserve"><value>Nachname</value></data>
+  <data name="Email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="BirthDate" xml:space="preserve"><value>Geburtsdatum</value></data>
+  <data name="FirstNamePlaceholder" xml:space="preserve"><value>Ihr Vorname</value></data>
+  <data name="LastNamePlaceholder" xml:space="preserve"><value>Ihr Nachname</value></data>
+
+  <!-- ROL -->
+  <data name="Admin" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Graduate" xml:space="preserve"><value>Absolvent</value></data>
+
+  <!-- AKADEMİK -->
+  <data name="Faculty" xml:space="preserve"><value>Fakultät</value></data>
+  <data name="Department" xml:space="preserve"><value>Abteilung</value></data>
+  <data name="Graduation" xml:space="preserve"><value>Abschluss</value></data>
+  <data name="GraduationYear" xml:space="preserve"><value>Abschlussjahr</value></data>
+  <data name="GraduationSemester" xml:space="preserve"><value>Abschlusssemester</value></data>
+  <data name="Spring" xml:space="preserve"><value>Frühling</value></data>
+  <data name="Fall" xml:space="preserve"><value>Herbst</value></data>
+  <data name="SelectFaculty" xml:space="preserve"><value>Fakultät auswählen</value></data>
+  <data name="SelectDepartment" xml:space="preserve"><value>Zuerst Fakultät auswählen</value></data>
+  <data name="SelectDepartmentOnly" xml:space="preserve"><value>Abteilung auswählen</value></data>
+  <data name="SelectYear" xml:space="preserve"><value>Jahr auswählen</value></data>
+  <data name="SelectSemester" xml:space="preserve"><value>Semester auswählen</value></data>
+
+  <!-- KARİYER -->
+  <data name="EmploymentStatus" xml:space="preserve"><value>Beschäftigungsstatus</value></data>
+  <data name="Working" xml:space="preserve"><value>Beschäftigt</value></data>
+  <data name="JobSeeking" xml:space="preserve"><value>Arbeitssuchend</value></data>
+  <data name="Academic" xml:space="preserve"><value>Akademisch</value></data>
+  <data name="Unspecified" xml:space="preserve"><value>Nicht angegeben</value></data>
+  <data name="CompanyName" xml:space="preserve"><value>Firmenname</value></data>
+  <data name="Company" xml:space="preserve"><value>Firma</value></data>
+  <data name="Position" xml:space="preserve"><value>Position</value></data>
+  <data name="Sector" xml:space="preserve"><value>Sektor</value></data>
+  <data name="Profession" xml:space="preserve"><value>Beruf</value></data>
+  <data name="StartYear" xml:space="preserve"><value>Startjahr</value></data>
+  <data name="SelectSectorFirst" xml:space="preserve"><value>Zuerst Sektor auswählen</value></data>
+  <data name="SelectProfessionFirst" xml:space="preserve"><value>Zuerst Beruf auswählen</value></data>
+  <data name="ActiveAfterSector" xml:space="preserve"><value>Aktiv nach Sektorauswahl.</value></data>
+  <data name="ActiveAfterProfession" xml:space="preserve"><value>Aktiv nach Berufsauswahl.</value></data>
+
+  <!-- TABLO BAŞLIKLARI -->
+  <data name="ColGraduate" xml:space="preserve"><value>Absolvent</value></data>
+  <data name="ColFacultyDepartment" xml:space="preserve"><value>Fakultät / Abteilung</value></data>
+  <data name="ColGraduation" xml:space="preserve"><value>Abschluss</value></data>
+  <data name="ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="ColCompany" xml:space="preserve"><value>Firma</value></data>
+  <data name="ColContact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="ColAction" xml:space="preserve"><value>Aktion</value></data>
+  <data name="ColTitle" xml:space="preserve"><value>Titel</value></data>
+  <data name="ColContent" xml:space="preserve"><value>Inhalt</value></data>
+  <data name="ColDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="ColStatusHeader" xml:space="preserve"><value>Status</value></data>
+
+  <!-- PROFİL -->
+  <data name="PersonalInfo" xml:space="preserve"><value>Persönliche Informationen</value></data>
+  <data name="ContactInfo" xml:space="preserve"><value>Kontaktinformationen</value></data>
+  <data name="ContactInfoSub" xml:space="preserve"><value>Sie können diese Informationen aktualisieren</value></data>
+  <data name="CareerInfo" xml:space="preserve"><value>Karriereinformationen</value></data>
+  <data name="ChangePhotoBtn" xml:space="preserve"><value>Foto ändern</value></data>
+
+  <!-- ŞİFRE -->
+  <data name="ChangePassword" xml:space="preserve"><value>Passwort ändern</value></data>
+  <data name="ChangePasswordTitle" xml:space="preserve"><value>Passwort ändern</value></data>
+  <data name="ChangePasswordSub" xml:space="preserve"><value>Wählen Sie ein sicheres Passwort</value></data>
+  <data name="CurrentPassword" xml:space="preserve"><value>Aktuelles Passwort</value></data>
+  <data name="NewPassword" xml:space="preserve"><value>Neues Passwort</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Neues Passwort bestätigen</value></data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve"><value>Passwort bestätigen</value></data>
+  <data name="Change" xml:space="preserve"><value>Ändern</value></data>
+  <data name="Password" xml:space="preserve"><value>Passwort</value></data>
+
+  <!-- GİRİŞ / KAYIT -->
+  <data name="Login" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="Register" xml:space="preserve"><value>Registrieren</value></data>
+  <data name="ForgotPassword" xml:space="preserve"><value>Passwort vergessen</value></data>
+  <data name="ResetPassword" xml:space="preserve"><value>Passwort zurücksetzen</value></data>
+  <data name="ForgotPasswordSub" xml:space="preserve"><value>Wir senden Ihnen einen Link zum Zurücksetzen an Ihre E-Mail-Adresse</value></data>
+  <data name="SendResetLink" xml:space="preserve"><value>Link senden</value></data>
+  <data name="BackToLogin" xml:space="preserve"><value>Zurück zur Anmeldung</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Willkommen</value></data>
+  <data name="WelcomeTitle" xml:space="preserve"><value>Willkommen</value></data>
+  <data name="LoginSubtitle" xml:space="preserve"><value>Bitte geben Sie Ihre Daten ein.</value></data>
+  <data name="EmailAddress" xml:space="preserve"><value>E-Mail-Adresse</value></data>
+  <data name="NoAccount" xml:space="preserve"><value>Kein Konto? Registrieren</value></data>
+  <data name="AlreadyHaveAccount" xml:space="preserve"><value>Haben Sie bereits ein Konto? Anmelden</value></data>
+  <data name="BannerText" xml:space="preserve"><value>Die Zukunft mit unseren Absolventen gestalten</value></data>
+  <data name="RegisterTitle" xml:space="preserve"><value>Registrieren</value></data>
+  <data name="RegisterSubtitle" xml:space="preserve"><value>Füllen Sie Ihre Daten aus, um ein Konto zu erstellen.</value></data>
+  <data name="RegisterBanner" xml:space="preserve"><value>Dem Absolventennetzwerk beitreten</value></data>
+  <data name="RememberMe" xml:space="preserve"><value>Angemeldet bleiben</value></data>
+
+  <!-- DUYURULAR -->
+  <data name="NoAnnouncements" xml:space="preserve"><value>Noch keine Ankündigungen.</value></data>
+  <data name="CreateAnnouncement" xml:space="preserve"><value>Ankündigung erstellen</value></data>
+  <data name="NewAnnouncement" xml:space="preserve"><value>Neue Ankündigung</value></data>
+  <data name="AnnouncementCount" xml:space="preserve"><value>Einträge</value></data>
+  <data name="AnnouncementTitle" xml:space="preserve"><value>Titel</value></data>
+  <data name="AnnouncementContent" xml:space="preserve"><value>Inhalt</value></data>
+  <data name="AnnouncementDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="ReadMore" xml:space="preserve"><value>Weiterlesen</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Passive" xml:space="preserve"><value>Inaktiv</value></data>
+  <data name="AnnouncementDeleteConfirm" xml:space="preserve"><value>Möchten Sie diese Ankündigung wirklich löschen?</value></data>
+
+  <!-- DOĞUM GÜNÜ -->
+  <data name="TodaysBirthdays" xml:space="preserve"><value>Heutige Geburtstage</value></data>
+  <data name="NoBirthdays" xml:space="preserve"><value>Heute keine Geburtstage.</value></data>
+
+  <!-- MESAJLAR -->
+  <data name="SendMessage" xml:space="preserve"><value>Senden</value></data>
+  <data name="MessagePlaceholder" xml:space="preserve"><value>Nachricht eingeben...</value></data>
+  <data name="NoConversation" xml:space="preserve"><value>Wählen Sie eine Person aus, um zu chatten.</value></data>
+  <data name="SearchPeople" xml:space="preserve"><value>Personen suchen...</value></data>
+
+  <!-- ONAYLA / REDDET -->
+  <data name="Approve" xml:space="preserve"><value>Genehmigen</value></data>
+  <data name="Reject" xml:space="preserve"><value>Ablehnen</value></data>
+  <data name="DeleteConfirm" xml:space="preserve"><value>Möchten Sie diesen Absolventen wirklich löschen?</value></data>
+  <data name="ApproveConfirm" xml:space="preserve"><value>Möchten Sie diesen Eintrag wirklich genehmigen?</value></data>
+  <data name="RejectConfirm" xml:space="preserve"><value>Möchten Sie diesen Eintrag wirklich ablehnen?</value></data>
+  <data name="NoPendingApprovals" xml:space="preserve"><value>Keine ausstehenden Genehmigungen.</value></data>
+
+  <!-- İSTATİSTİKLER -->
+  <data name="TotalGraduates" xml:space="preserve"><value>Gesamtzahl der Absolventen</value></data>
+  <data name="ByFaculty" xml:space="preserve"><value>Nach Fakultät</value></data>
+  <data name="ByDepartment" xml:space="preserve"><value>Nach Abteilung</value></data>
+  <data name="BySector" xml:space="preserve"><value>Nach Sektor</value></data>
+  <data name="ByStatus" xml:space="preserve"><value>Nach Status</value></data>
+</root>

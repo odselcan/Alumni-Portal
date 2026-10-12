@@ -1,0 +1,269 @@
+@{
+    ViewData["Title"] = L["Statistics"];
+    int total = ViewBag.TotalGraduates;
+    int employed = ViewBag.Employed;
+    int jobSeeking = ViewBag.JobSeeking;
+    int academic = ViewBag.Academic;
+    int unspecified = ViewBag.Unspecified;
+}
+
+
+@section Styles {
+    <style>
+        .stat-card { border-radius:14px;border:none;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:24px; }
+        .stat-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0; }
+        .stat-number { font-size:2rem;font-weight:700;color:#1a1a2e;line-height:1; }
+        .stat-label { font-size:0.82rem;color:#888;margin-top:4px; }
+        .stat-percent { font-size:0.82rem;color:#aaa;margin-top:2px; }
+        .progress { height:8px;border-radius:4px; }
+        .section-title { font-size:1rem;font-weight:600;color:#1a1a2e;margin-bottom:20px; }
+        .list-stat-item { display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f5f5f5; }
+        .list-stat-item:last-child { border-bottom:none; }
+        .list-stat-bar { height:6px;border-radius:3px;background:#ffe0e0;margin-top:6px; }
+        .list-stat-bar-fill { height:6px;border-radius:3px;background:#cc0000; }
+        .chart-container { position:relative;height:260px; }
+    </style>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#ffe0e0;">
+                    <i class="bi bi-people-fill" style="color:#cc0000;"></i>
+                </div>
+                <div>
+                    <div class="stat-number">@total</div>
+                    <div class="stat-label">@L["GraduateList"]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#e6f9f0;">
+                    <i class="bi bi-briefcase-fill" style="color:#22c55e;"></i>
+                </div>
+                <div>
+                    <div class="stat-number">@employed</div>
+                    <div class="stat-label">@L["Working"]</div>
+                    <div class="stat-percent">%@(total > 0 ? Math.Round((double)employed / total * 100, 1) : 0)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#fff7e6;">
+                    <i class="bi bi-search" style="color:#f59e0b;"></i>
+                </div>
+                <div>
+                    <div class="stat-number">@jobSeeking</div>
+                    <div class="stat-label">@L["JobSeeking"]</div>
+                    <div class="stat-percent">%@(total > 0 ? Math.Round((double)jobSeeking / total * 100, 1) : 0)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#e6f0ff;">
+                    <i class="bi bi-book-fill" style="color:#3b82f6;"></i>
+                </div>
+                <div>
+                    <div class="stat-number">@academic</div>
+                    <div class="stat-label">@L["Academic"]</div>
+                    <div class="stat-percent">%@(total > 0 ? Math.Round((double)academic / total * 100, 1) : 0)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-pie-chart-fill me-2" style="color:#cc0000;"></i>@L["EmploymentStatus"]
+            </div>
+            <div class="chart-container">
+                <canvas id="statusPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-bar-chart-fill me-2" style="color:#cc0000;"></i>@L["Faculty"]
+            </div>
+            <div class="chart-container">
+                <canvas id="facultyBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-list-check me-2" style="color:#cc0000;"></i>@L["EmploymentStatus"]
+            </div>
+            @{
+                var statuses = new[]
+                {
+                    new { Label = L["Working"].Value, Count = employed, Color = "#22c55e" },
+                    new { Label = L["JobSeeking"].Value, Count = jobSeeking, Color = "#f59e0b" },
+                    new { Label = L["Academic"].Value, Count = academic, Color = "#3b82f6" },
+                    new { Label = L["Unspecified"].Value, Count = unspecified, Color = "#d1d5db" }
+                };
+            }
+            @foreach (var s in statuses)
+            {
+                var percent = total > 0 ? Math.Round((double)s.Count / total * 100, 1) : 0;
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="font-size:0.88rem;color:#444;">@s.Label</span>
+                        <span style="font-size:0.88rem;font-weight:600;color:#1a1a2e;">
+                            @s.Count <span style="color:#aaa;font-weight:400;">(%@percent)</span>
+                        </span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width:@percent%;background:@s.Color;" role="progressbar"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-building me-2" style="color:#cc0000;"></i>@L["Faculty"]
+            </div>
+            @if (ViewBag.ByFaculty != null)
+            {
+                foreach (var f in ViewBag.ByFaculty)
+                {
+                    var pct = total > 0 ? Math.Round((double)f.Count / total * 100, 1) : 0;
+                    <div class="list-stat-item">
+                        <div style="flex:1;">
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size:0.88rem;color:#1a1a2e;font-weight:500;">@f.Faculty</span>
+                                <span style="font-size:0.88rem;color:#888;">@f.Count kişi · %@pct</span>
+                            </div>
+                            <div class="list-stat-bar mt-2"><div class="list-stat-bar-fill" style="width:@pct%;"></div></div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-diagram-3-fill me-2" style="color:#cc0000;"></i>@L["Department"]
+            </div>
+            @if (ViewBag.ByDepartment != null)
+            {
+                foreach (var d in ViewBag.ByDepartment)
+                {
+                    var pct = total > 0 ? Math.Round((double)d.Count / total * 100, 1) : 0;
+                    <div class="list-stat-item">
+                        <div style="flex:1;">
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size:0.88rem;color:#1a1a2e;font-weight:500;">@d.Department</span>
+                                <span style="font-size:0.88rem;color:#888;">@d.Count kişi · %@pct</span>
+                            </div>
+                            <div class="list-stat-bar mt-2"><div class="list-stat-bar-fill" style="width:@pct%;"></div></div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm p-4 h-100">
+            <div class="section-title">
+                <i class="bi bi-briefcase me-2" style="color:#cc0000;"></i>@L["Sector"]
+            </div>
+            @if (ViewBag.BySector != null)
+            {
+                foreach (var s in ViewBag.BySector)
+                {
+                    var pct = total > 0 ? Math.Round((double)s.Count / total * 100, 1) : 0;
+                    <div class="list-stat-item">
+                        <div style="flex:1;">
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size:0.88rem;color:#1a1a2e;font-weight:500;">@s.Sector</span>
+                                <span style="font-size:0.88rem;color:#888;">@s.Count kişi · %@pct</span>
+                            </div>
+                            <div class="list-stat-bar mt-2"><div class="list-stat-bar-fill" style="width:@pct%;"></div></div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        @{
+    var workingLabel  = L["Working"].Value;
+    var seekingLabel  = L["JobSeeking"].Value;
+    var academicLabel = L["Academic"].Value;
+    var unspecLabel   = L["Unspecified"].Value;
+}
+        const pieCtx = document.getElementById('statusPieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [@Html.Raw($"'{workingLabel}', '{seekingLabel}', '{academicLabel}', '{unspecLabel}'")],
+                datasets: [{
+                    data: [@employed, @jobSeeking, @academic, @unspecified],
+                    backgroundColor: ['#22c55e', '#f59e0b', '#3b82f6', '#d1d5db'],
+                    borderWidth: 2, borderColor: '#fff'
+                }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ padding:16, font:{ size:12 } } } }, cutout:'65%' }
+        });
+
+
+        const barCtx = document.getElementById('facultyBarChart').getContext('2d');
+        @{
+            var facultyLabels = "[]";
+            var facultyData = "[]";
+            if (ViewBag.ByFaculty != null)
+            {
+                var labels = new System.Text.StringBuilder("[");
+                var data = new System.Text.StringBuilder("[");
+                bool first = true;
+                foreach (var f in ViewBag.ByFaculty)
+                {
+                    if (!first) { labels.Append(","); data.Append(","); }
+                     labels.Append("'").Append(f.Faculty).Append("'");
+                    data.Append(f.Count);
+                    first = false;
+                }
+                labels.Append("]"); data.Append("]");
+                facultyLabels = labels.ToString();
+                facultyData = data.ToString();
+            }
+        }
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(facultyLabels),
+                datasets: [{ label: 'Mezun Sayısı', data: @Html.Raw(facultyData), backgroundColor: '#cc0000', borderRadius: 8, borderSkipped: false }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ stepSize:1 }, grid:{ color:'#f0f0f0' } }, x:{ grid:{ display:false } } } }
+        });
+    </script>
+}
